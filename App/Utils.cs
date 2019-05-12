@@ -37,4 +37,16 @@ namespace Utils {
             return dict == null || dict.Count == 0;
         }
     }
+
+    public static class DateUtils {
+        public static string GetTodaysDate() {
+            DateTime dt = DateTime.Now;
+            return String.Format(
+                "{0}/{1}/{2}", 
+                dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), 
+                dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), 
+                dt.Year
+            );
+        }
+    }
 }

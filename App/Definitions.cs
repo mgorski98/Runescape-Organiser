@@ -294,7 +294,7 @@ namespace RunescapeOrganiser {
         [System.Obsolete]
         public static void DumpToDisk() {
             ItemNames.Add("High Level Alchemy");
-            using (var fs = new FileStream(ItemNamesFilePath, FileMode.OpenOrCreate)) {
+            using (var fs = new FileStream(ItemNamesFilePath, FileMode.Create)) {
                 using (var writer = new StreamWriter(fs)) {
                     writer.Write(JsonConvert.SerializeObject(ItemNames, Formatting.Indented));
                 }

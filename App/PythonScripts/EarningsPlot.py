@@ -25,7 +25,7 @@ plt.gca().xaxis.set_major_locator(mdates.DayLocator())
 plt.gcf().set_size_inches(8,6)
 plt.plot(x, y, lw = 2, color = 'black')
 plt.xlabel("Date")
-plt.ylabel("Experience")
+plt.ylabel("Earnings")
 plt.gcf().autofmt_xdate()
 
 gc.collect()

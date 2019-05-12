@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using Utils;
 
 namespace RunescapeOrganiser {
     public class DailySlayerTaskList {
@@ -19,7 +20,7 @@ namespace RunescapeOrganiser {
         public DailySlayerTaskList() {
             this.SlayerTasks = new ObservableCollection<SlayerTask>();
             DateTime dt = DateTime.Now;
-            this.TaskDate = String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
+            this.TaskDate = DateUtils.GetTodaysDate();//String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
         }
 
         ~DailySlayerTaskList() {
@@ -46,8 +47,6 @@ namespace RunescapeOrganiser {
                 }
             }
         }
-
-        public string GetDate() => this.TaskDate;
 
         public decimal TotalExperience() {
             return SlayerTasks.Sum(task => task.ExperienceGained);

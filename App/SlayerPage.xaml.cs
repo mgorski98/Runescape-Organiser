@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Threading;
+using Utils;
 
 namespace RunescapeOrganiser {
     /// <summary>
@@ -32,11 +33,10 @@ namespace RunescapeOrganiser {
         }
 
         public DailySlayerTaskList AddDaily() {
-            DateTime dt = DateTime.Now;
-            string dateString = String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
+            string dateString = DateUtils.GetTodaysDate();// String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
             foreach (var entry in SlayerTasksView.Items) {
                 if (entry is DailySlayerTaskList list) {
-                    if (list.GetDate() == dateString) {
+                    if (list.TaskDate == dateString) {
                         return list;
                     }
                 }
@@ -59,6 +59,7 @@ namespace RunescapeOrganiser {
                 if (result == MessageBoxResult.Yes) {
                     mainWindow.DailySlayerTasks.Remove(l);
                     SlayerTasksView.UpdateLayout();
+                    TaskInfo.Text = "";
                 }
             }
             if (o is SlayerTask task) {
@@ -66,10 +67,9 @@ namespace RunescapeOrganiser {
                 if (result == MessageBoxResult.Yes) {
                     task.GetOwner().Remove(task);
                     SlayerTasksView.UpdateLayout();
+                    TaskInfo.Text = "";
                 }
-                    
             }
-            TaskInfo.Text = "";
         }
 
         private void AddTaskWindowShowEvent(object sender, RoutedEventArgs e) {//add task//actually, should only show the window

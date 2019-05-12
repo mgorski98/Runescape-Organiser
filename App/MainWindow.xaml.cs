@@ -16,7 +16,6 @@ using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
-using OxyPlot.Wpf;
 
 namespace RunescapeOrganiser {
     /// <summary>
@@ -34,9 +33,14 @@ namespace RunescapeOrganiser {
         }
 
         private static object threadLock = new object();
+        private static object threadLock2 = new object();
 
         private bool FinishedLoading {
             get; set;
+        }
+
+        private bool FinishedLoading2 {
+            get;set;
         }
 
         private SlayerPage slayerPage;
@@ -57,7 +61,7 @@ namespace RunescapeOrganiser {
             string[] files = Directory.GetFiles(@"../../Tasks");
             List<Thread> threadList = new List<Thread>();
             foreach (var file in files) {
-                Thread t = new Thread(() => LoadFromJson(file));
+                Thread t = new Thread(() => LoadTaskFromJson(file));
                 threadList.Add(t);
                 t.Start();
 
@@ -71,7 +75,37 @@ namespace RunescapeOrganiser {
             this.Dispatcher.Invoke(() => slayerPage.SlayerTasksView.ItemsSource = this.DailySlayerTasks);
         }
 
-        private void LoadFromJson(string path) {
+        private void LoadEarnings() {
+            string[] files = Directory.GetFiles(@"../../Earnings");
+            List<Thread> threads = new List<Thread>();
+            foreach (var file in files) {
+                Thread t = new Thread(() => LoadDailyEarningsFromJson(file));
+                threads.Add(t);
+                t.Start();
+            }
+            while (!this.FinishedLoading2) {
+                this.FinishedLoading2 = threads.All(t => !t.IsAlive);
+            }
+            List<DailyEarnings> tempList = new List<DailyEarnings>(this.@DailyEarnings);
+            tempList = tempList.OrderByDescending(earning => earning.Date).ToList();
+            this.@DailyEarnings = new ObservableCollection<DailyEarnings>(tempList);
+            this.Dispatcher.Invoke(() => earningsPage.EarningsView.ItemsSource = this.@DailyEarnings);
+        }
+
+        private void LoadDailyEarningsFromJson(string path) {
+            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+            DailyEarnings er = null;
+
+            using (var reader = new StreamReader(path)) {
+                er = JsonConvert.DeserializeObject<DailyEarnings>(reader.ReadToEnd());
+            }
+
+            lock (threadLock2) {
+                @DailyEarnings.Add(er);
+            }
+        }
+
+        private void LoadTaskFromJson(string path) {
             if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
 
             DailySlayerTaskList l = null;
@@ -118,6 +152,7 @@ namespace RunescapeOrganiser {
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             slayerPage.KillAndClearChartProcess();
+            Earnings.DumpToDisk();
         }
     }
 }
