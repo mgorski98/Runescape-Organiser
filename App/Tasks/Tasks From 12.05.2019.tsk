@@ -1,0 +1,19 @@
+{
+  "SlayerTasks": [
+    {
+      "MonsterType": 47,
+      "MonsterName": "Adamant Dragons",
+      "BossMonsterType": null,
+      "BossMonsterName": null,
+      "IsExtended": false,
+      "IsCancelled": false,
+      "Amount": 32,
+      "ExperienceGained": 22028.160,
+      "HasBossCounterpart": false,
+      "BossKills": null,
+      "AdditionalNotes": [],
+      "TotalKills": 32
+    }
+  ],
+  "TaskDate": "12/05/2019"
+}

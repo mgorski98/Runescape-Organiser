@@ -1,0 +1,19 @@
+{
+  "SlayerTasks": [
+    {
+      "MonsterType": 3,
+      "MonsterName": "Acheron Mammoths",
+      "BossMonsterType": null,
+      "BossMonsterName": null,
+      "IsExtended": false,
+      "IsCancelled": false,
+      "Amount": 32,
+      "ExperienceGained": 134899.2,
+      "HasBossCounterpart": false,
+      "BossKills": null,
+      "AdditionalNotes": [],
+      "TotalKills": 32
+    }
+  ],
+  "TaskDate": "11/05/2019"
+}

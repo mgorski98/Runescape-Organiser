@@ -1,0 +1,42 @@
+{
+  "QBD": {
+    "Key": "Queen Black Dragon",
+    "Value": 1693.5
+  },
+  "The_Magister": {
+    "Key": "The Magister",
+    "Value": 8000.0
+  },
+  "Legiones": {
+    "Key": "Legiones",
+    "Value": 1829.2
+  },
+  "Kril_Tsutsaroth": {
+    "Key": "K'ril Tsutsaroth",
+    "Value": 2151.5
+  },
+  "KreeArra": {
+    "Key": "Kree'arra",
+    "Value": 2934.0
+  },
+  "KBD": {
+    "Key": "King Black Dragon",
+    "Value": 1050.6
+  },
+  "Kalphite_Queen": {
+    "Key": "Kalphite Queen",
+    "Value": 1309.4
+  },
+  "Kalphite_King": {
+    "Key": "Kalphite King",
+    "Value": 3963.0
+  },
+  "Exiled_Kalphite_Queen": {
+    "Key": "Exiled Kalphite Queen",
+    "Value": 2055.0
+  },
+  "Dagannoth_Kings": {
+    "Key": "Dagannoth Kings",
+    "Value": 1068.0
+  }
+}

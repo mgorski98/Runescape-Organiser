@@ -1,0 +1,33 @@
+{
+  "SlayerTasks": [
+    {
+      "MonsterType": 3,
+      "MonsterName": "Acheron Mammoths",
+      "BossMonsterType": null,
+      "BossMonsterName": null,
+      "IsExtended": false,
+      "IsCancelled": false,
+      "Amount": 32,
+      "ExperienceGained": 134899.2,
+      "HasBossCounterpart": false,
+      "BossKills": null,
+      "AdditionalNotes": [],
+      "TotalKills": 32
+    },
+    {
+      "MonsterType": 25,
+      "MonsterName": "Corrupted Lizards",
+      "BossMonsterType": null,
+      "BossMonsterName": null,
+      "IsExtended": false,
+      "IsCancelled": false,
+      "Amount": 22,
+      "ExperienceGained": 11734.8,
+      "HasBossCounterpart": false,
+      "BossKills": null,
+      "AdditionalNotes": [],
+      "TotalKills": 22
+    }
+  ],
+  "TaskDate": "10/05/2019"
+}

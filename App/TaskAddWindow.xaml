@@ -1,0 +1,50 @@
+﻿<Window x:Class="RunescapeOrganiser.TaskAddWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RunescapeOrganiser"
+        mc:Ignorable="d"
+        Title="Add Task" Height="750" Width="434.512" ResizeMode="CanMinimize">
+    <Grid>
+        <GroupBox Header="Bonuses" HorizontalAlignment="Center" Height="135" Margin="14,511,14,74.8" VerticalAlignment="Center" Width="400" BorderBrush="White">
+            <Grid HorizontalAlignment="Center" Height="130" Margin="0,0,0,0" VerticalAlignment="Center" Width="400">
+                <ComboBox Name="CodexBonuses" HorizontalAlignment="Center" Margin="0,0,0,40" VerticalAlignment="Center" Width="300"/>
+                <Label Content="Slayer Codex Bonus" HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top"/>
+                <CheckBox Name="ContractCheckBox" Content="Slayer Contract" HorizontalAlignment="Left" Margin="50,69,0,0" VerticalAlignment="Top" Width="114"/>
+                <CheckBox Checked="CancelledCheckbox_Checked" Name="CancelledCheckbox" Content="Cancelled" HorizontalAlignment="Left" Margin="50,89,0,0" VerticalAlignment="Top"/>
+                <CheckBox Checked="ExtendedCheckBox_Checked" Name="ExtendedCheckBox"  Content="Extended" HorizontalAlignment="Left" Margin="249,72,0,0" VerticalAlignment="Top" Width="101"/>
+            </Grid>
+        </GroupBox>
+        <Button Click="Button_Click" Content="Done" HorizontalAlignment="Center" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="75"/>
+        <CheckBox Name="BossCheckBox" Unchecked="BossCheckBox_Unchecked" Checked="CheckBox_Checked" Content="Boss task" HorizontalAlignment="Left" Margin="14,293,0,0" VerticalAlignment="Top" Width="106"/>
+        <ListView Name="BossListView" HorizontalAlignment="Left" Height="100" Margin="9,337,0,0" VerticalAlignment="Top" Width="400" Foreground="Black">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBox MaxLength="3" PreviewTextInput="TextBoxNumberValidation" Name="BossKillsAmountTextBox" HorizontalAlignment="Left" Height="23" Margin="9,469,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
+        <Label Name="BossKillsLabel" Content="Boss kills" HorizontalAlignment="Left" Margin="5,443,0,0" VerticalAlignment="Top"/>
+        <Label Name="BossesLabel" Content="Bosses" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,312,0,0"/>
+        <ListView Name="MonsterListView" HorizontalAlignment="Left" Height="100" Margin="9,104,0,0" VerticalAlignment="Top" Width="400" Foreground="Black">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="PreviewMouseUp" Handler="ListViewItem_MouseLeftButtonDown"></EventSetter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <Label Content="Monsters" HorizontalAlignment="Left" Margin="14,78,0,0" VerticalAlignment="Top"/>
+        <TextBox MaxLength="3" Name="MonstersKilledTextBox" PreviewTextInput="TextBoxNumberValidation" HorizontalAlignment="Left" Height="23" Margin="12,235,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
+        <Label Content="Monsters killed" HorizontalAlignment="Left" Margin="7,209,0,0" VerticalAlignment="Top"/>
+        <TextBox TextChanged="MonsterSearch" Name="FindMonstersTextBox" HorizontalAlignment="Left" Height="23" Margin="9,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
+        <Label Content="Find a monster" HorizontalAlignment="Left" Margin="9,24,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>

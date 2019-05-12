@@ -1,0 +1,286 @@
+{
+  "Grotworm": {
+    "Key": "Grotworms (Mature)",
+    "Value": 343.6
+  },
+  "Aquanite": {
+    "Key": "Aquanites",
+    "Value": 212.6
+  },
+  "Airut": {
+    "Key": "Airuts",
+    "Value": 800.2
+  },
+  "Dark_Beast": {
+    "Key": "Dark Beasts",
+    "Value": 331.4
+  },
+  "Acheron_Mammoth": {
+    "Key": "Acheron Mammoths",
+    "Value": 4215.6
+  },
+  "Abyssal_Demon": {
+    "Key": "Abyssal Demons",
+    "Value": 278.0
+  },
+  "Nechryael": {
+    "Key": "Nechryaels",
+    "Value": 251.6
+  },
+  "Automaton": {
+    "Key": "Automatons",
+    "Value": 624.0
+  },
+  "Seeker": {
+    "Key": "Seekers",
+    "Value": 440.6
+  },
+  "Gargoyle": {
+    "Key": "Gargoyles",
+    "Value": 197.4
+  },
+  "Muspah": {
+    "Key": "Muspah",
+    "Value": 469.0
+  },
+  "Blood_Nihil": {
+    "Key": "Blood Nihils",
+    "Value": 705.4
+  },
+  "Smoke_Nihil": {
+    "Key": "Smoke Nihils",
+    "Value": 564.0
+  },
+  "Shadow_Nihil": {
+    "Key": "Shadow Nihils",
+    "Value": 423.0
+  },
+  "Ice_Nihil": {
+    "Key": "Ice Nihils",
+    "Value": 564.0
+  },
+  "Nightmare": {
+    "Key": "Nightmares",
+    "Value": 1540.0
+  },
+  "Mutated_Jadinko_Baby": {
+    "Key": "Mutated Jadinko Babies",
+    "Value": 98.6
+  },
+  "Mutated_Jadinko_Male": {
+    "Key": "Mutated Jadinko Males",
+    "Value": 209.6
+  },
+  "Mutated_Jadinko_Guard": {
+    "Key": "Mutated Jadinko Guards",
+    "Value": 188.4
+  },
+  "Rorarius": {
+    "Key": "Rorarii",
+    "Value": 140.0
+  },
+  "Gladius": {
+    "Key": "Gladii",
+    "Value": 220.2
+  },
+  "Corrupted_Scorpion": {
+    "Key": "Corrupted Scorpions",
+    "Value": 353.2
+  },
+  "Edimmu": {
+    "Key": "Edimmus",
+    "Value": 880.2
+  },
+  "Corrupted_Scarab": {
+    "Key": "Corrupted Scarabs",
+    "Value": 389.0
+  },
+  "Ice_Strykewyrm": {
+    "Key": "Ice Strykewyrms",
+    "Value": 693.2
+  },
+  "Lava_Strykewyrm": {
+    "Key": "Lava Strykewyrms",
+    "Value": 1872.0
+  },
+  "Corrupted_Lizard": {
+    "Key": "Corrupted Lizards",
+    "Value": 533.4
+  },
+  "Dragonstone_Dragon": {
+    "Key": "Dragonstone Dragons",
+    "Value": 1448.4
+  },
+  "Ganodermic_Beast": {
+    "Key": "Ganodermic Beasts",
+    "Value": 565.0
+  },
+  "Living_Wyvern": {
+    "Key": "Living Wyverns",
+    "Value": 1878.8
+  },
+  "Ripper_Demon": {
+    "Key": "Ripper Demons",
+    "Value": 2721.5
+  },
+  "Camel_Warrior": {
+    "Key": "Camel Warriors",
+    "Value": 4768.8
+  },
+  "Corrupted_Dust_Devil": {
+    "Key": "Corrupted Dust Devils",
+    "Value": 679.8
+  },
+  "Onyx_Dragon": {
+    "Key": "Onyx Dragons",
+    "Value": 1858.8
+  },
+  "Soulgazer": {
+    "Key": "Soulgazers",
+    "Value": 1950.0
+  },
+  "Corrupted_Kalphite": {
+    "Key": "Corrupted Kalphites",
+    "Value": 494.0
+  },
+  "Hydrix_Dragon": {
+    "Key": "Hydrix Dragons",
+    "Value": 4768.8
+  },
+  "Corrupted_Worker": {
+    "Key": "Corrupted Workers",
+    "Value": 653.0
+  },
+  "Vinecrawler": {
+    "Key": "Vinecrawlers",
+    "Value": 2086.0
+  },
+  "Salawa_Akh": {
+    "Key": "Salawa Akhs",
+    "Value": 504.0
+  },
+  "Bulbous_Crawler": {
+    "Key": "Bulbous Crawlers",
+    "Value": 2360.0
+  },
+  "Feline_Akh": {
+    "Key": "Feline Akhs",
+    "Value": 536.2
+  },
+  "Moss_Golem": {
+    "Key": "Moss Golems",
+    "Value": 2408.8
+  },
+  "Scarab_Akh": {
+    "Key": "Scarab Akhs",
+    "Value": 714.8
+  },
+  "Crocodile_Akh": {
+    "Key": "Crocodile Akhs",
+    "Value": 761.0
+  },
+  "Gorilla_Akh": {
+    "Key": "Gorilla Akhs",
+    "Value": 705.0
+  },
+  "Imperial_Akh": {
+    "Key": "Imperial Akhs",
+    "Value": 1780.6
+  },
+  "Dagannoth": {
+    "Key": "Dagannoth",
+    "Value": 57.6
+  },
+  "Adamant_Dragon": {
+    "Key": "Adamant Dragons",
+    "Value": 655.6
+  },
+  "Rune_Dragon": {
+    "Key": "Rune Dragons",
+    "Value": 2051.0
+  },
+  "Black_Demon": {
+    "Key": "Black Demons",
+    "Value": 294.4
+  },
+  "Celestial_Dragon": {
+    "Key": "Celestial Dragons",
+    "Value": 976.3
+  },
+  "Chaos_Giant": {
+    "Key": "Chaos Giants",
+    "Value": 929.3
+  },
+  "Crystal_Shapeshifter": {
+    "Key": "Crystal Shapeshifters",
+    "Value": 1269.8
+  },
+  "Glacor": {
+    "Key": "Glacors",
+    "Value": 1881.0
+  },
+  "Steel_Dragon": {
+    "Key": "Steel Dragons",
+    "Value": 350.0
+  },
+  "Iron_Dragon": {
+    "Key": "Iron Dragons",
+    "Value": 245.0
+  },
+  "Kal_Gerion_Demon": {
+    "Key": "Kal'Gerion Demons",
+    "Value": 1858.8
+  },
+  "Kalphite": {
+    "Key": "Kalphites",
+    "Value": 147.0
+  },
+  "Thruthful_Shadow": {
+    "Key": "Thrutful Shadows",
+    "Value": 343.0
+  },
+  "Blissful_Shadow": {
+    "Key": "Blissful Shadows",
+    "Value": 565.0
+  },
+  "Manifest_Shadow": {
+    "Key": "Manifest Shadows",
+    "Value": 930.0
+  },
+  "Tormented_Demon": {
+    "Key": "Tormented Demons",
+    "Value": 1136.0
+  },
+  "Vyrewatch": {
+    "Key": "Vyrewatch",
+    "Value": 89.4
+  },
+  "Waterfiend": {
+    "Key": "Waterfiends",
+    "Value": 335.0
+  },
+  "Elves": {
+    "Key": "Elves",
+    "Value": 608.0
+  },
+  "Aviansie": {
+    "Key": "Aviansies",
+    "Value": 187.0
+  },
+  "Black_Dragon": {
+    "Key": "Black Dragons",
+    "Value": 245.0
+  },
+  "Desert_Strykewyrm": {
+    "Key": "Desert Strykewyrms",
+    "Value": 376.5
+  },
+  "Greater_Demon": {
+    "Key": "Greater Demons",
+    "Value": 135.4
+  },
+  "Mithril_Dragon": {
+    "Key": "Mithril Dragons",
+    "Value": 564.4
+  }
+}

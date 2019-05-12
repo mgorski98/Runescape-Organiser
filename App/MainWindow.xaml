@@ -1,0 +1,14 @@
+﻿<Window x:Class="RunescapeOrganiser.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RunescapeOrganiser"
+        mc:Ignorable="d"
+        Title="RuneScape Organiser" Height="600" Width="1000" ResizeMode="CanMinimize" Closing="Window_Closing">
+    <Grid>
+        <TabControl Name="Tabs" HorizontalAlignment="Center" Height="537" Margin="0,0,0,0" VerticalAlignment="Center" Width="960">
+            
+        </TabControl>
+    </Grid>
+</Window>
