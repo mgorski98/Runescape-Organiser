@@ -24,6 +24,12 @@ namespace RunescapeOrganiser {
             this.Price = Price;
         }
 
+        public void Add(SoldItem si) {
+            if (si == null || si.ItemName != this.ItemName) return;
+            this.Price += si.Price;
+            this.Amount += si.Amount;
+        }
+
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("Item sold: ");
@@ -52,8 +58,6 @@ namespace RunescapeOrganiser {
         public static bool operator !=(SoldItem si1, SoldItem si2) {
             return !si1?.Equals(si2) ?? false;
         }
-        public static SoldItem operator+(SoldItem si1, SoldItem si2) {
-            return si1 == si2 ? new SoldItem(si1.ItemName, si1.Amount + si2.Amount, si1.Price + si2.Price) : null;
-        }
+       
     }
 }

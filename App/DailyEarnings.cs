@@ -31,10 +31,11 @@ namespace RunescapeOrganiser {
             if (item == null) return;
             SoldItem found = Find(item);
             if (found != null) {
-                found += item;
+                found.Add(item);
                 return;
             }
             this.SoldItems.Add(item);
+            item.SetOwner(this);
         }
         
         public void Remove(SoldItem item) {
@@ -48,7 +49,7 @@ namespace RunescapeOrganiser {
 
         public SoldItem Find(SoldItem item) {
             foreach (var _item in this.SoldItems) {
-                if (_item == item) {
+                if (_item.ItemName == item.ItemName) {
                     return _item;
                 }
             }
@@ -71,9 +72,9 @@ namespace RunescapeOrganiser {
 
         public override bool Equals(object obj) {
             if (obj is DailyEarnings earnings) {
-                return earnings.Date == this.Date;
+                return earnings?.Date == this.Date;
             }
-            throw new InvalidOperationException();
+            return false;
         }
 
         public override int GetHashCode() {

@@ -21,7 +21,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="- "></TextBlock>
                         <TextBlock Text="{Binding Amount}"></TextBlock>
-                        <TextBlock Text=" "></TextBlock>
+                        <TextBlock Text="x "></TextBlock>
                         <TextBlock Text="{Binding ItemName}"></TextBlock>
                     </StackPanel>
                 </DataTemplate>

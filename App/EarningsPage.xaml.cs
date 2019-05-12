@@ -98,6 +98,7 @@ namespace RunescapeOrganiser {
             }
             DailyEarnings parent = AddDaily();
             parent.Add(item);
+            EarningsView.Items.Refresh();
             EarningsView.UpdateLayout();
         }
 
@@ -140,6 +141,7 @@ namespace RunescapeOrganiser {
 
         private void Button_Click_1(object sender, RoutedEventArgs e) {
             AddSoldItem();
+            EarningsView.UpdateLayout();
         }
     }
 }
