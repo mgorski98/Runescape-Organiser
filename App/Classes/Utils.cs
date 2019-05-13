@@ -6,14 +6,8 @@ using System.Threading.Tasks;
 
 namespace Utils {
     public static class ListUtils {
-
-        public static bool IsEmpty<T>(this List<T> list) {
-            return list.Count == 0;
-        }
-
-        public static bool IsNullOrEmpty<T>(List<T> list) {
-            return list == null || list.Count == 0;
-        }
+        public static bool IsEmpty<T>(this List<T> list) => list.Count == 0;
+        public static bool IsNullOrEmpty<T>(List<T> list) => (list == null || list.Count == 0);
     }
 
     public static class StringUtils {
@@ -26,16 +20,21 @@ namespace Utils {
             }
             return true;
         }
+
+        public static string Capitalize(this string s) {
+            string result = null;
+            var words = s.Split(' ');
+            for (int i = 0; i < words.Length; ++i) {
+                words[i] = words[i][0].ToString().ToUpper() + new string(words[i].Skip(1).ToArray());
+            }
+            result = String.Join(" ", words);
+            return result;
+        }
     }
 
     public static class DictUtils {
-        public static bool IsEmpty<T, U>(this Dictionary<T, U> dict) {
-            return dict.Count == 0;
-        }
-
-        public static bool IsNullOrEmpty<T, U>(Dictionary<T, U> dict) {
-            return dict == null || dict.Count == 0;
-        }
+        public static bool IsEmpty<T, U>(this Dictionary<T, U> dict) => dict.Count == 0;
+        public static bool IsNullOrEmpty<T, U>(Dictionary<T, U> dict) => (dict == null || dict.Count == 0);
     }
 
     public static class DateUtils {

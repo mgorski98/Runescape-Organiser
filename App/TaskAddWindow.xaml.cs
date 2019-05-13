@@ -41,6 +41,7 @@ namespace RunescapeOrganiser {
                     }
                 }
             }
+            BossListView.Items.Refresh();
         }
 
         private string[] GetMonsterNames() {
@@ -80,14 +81,14 @@ namespace RunescapeOrganiser {
             return s;
         }
 
-        private void HideBossControls () {
+        public void HideBossControls () {
             BossListView.Visibility = Visibility.Hidden;
             BossesLabel.Visibility = Visibility.Hidden;
             BossKillsAmountTextBox.Visibility = Visibility.Hidden;
             BossKillsLabel.Visibility = Visibility.Hidden;
         }
 
-        private void ShowBossControls() {
+        public void ShowBossControls() {
             BossListView.Visibility = Visibility.Visible;
             BossesLabel.Visibility = Visibility.Visible;
             BossKillsAmountTextBox.Visibility = Visibility.Visible;

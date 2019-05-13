@@ -49,7 +49,7 @@ namespace RunescapeOrganiser {
             }
             var newDaily = new DailyEarnings();
             List<DailyEarnings> tempList = new List<DailyEarnings>(mainWindow.@DailyEarnings) { newDaily };
-            tempList = tempList.OrderByDescending(s => s.Date).ToList();
+            tempList = tempList.OrderByDescending(s => s?.Date).ToList();
             mainWindow.DailyEarnings = new System.Collections.ObjectModel.ObservableCollection<DailyEarnings>(tempList);
             EarningsView.ItemsSource = mainWindow.DailyEarnings;
             UpdateEarningsView();
@@ -83,7 +83,24 @@ namespace RunescapeOrganiser {
         }
 
         public void DrawChart() {
-            
+            var chartData = EarningsView.Items.Cast<DailyEarnings>();
+            if (chartData.Count() <= 1) {
+                MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
+                return;
+            }
+            chartProcess = new Process();
+            StringBuilder args = new StringBuilder();
+
+            chartProcess.StartInfo.Arguments = args.ToString();
+            chartProcess.StartInfo.FileName = @"..\..\PythonScripts\EarningsPlot.py";
+            chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            try {
+                chartProcess.Start();
+            } catch (Exception) {
+                MessageBox.Show("Error: Cannot find a file EarningsPlot.py");
+                return;
+            }
+            chartProcess.WaitForExit();
         }
 
         public SoldItem CreateSoldItem() {
@@ -135,7 +152,7 @@ namespace RunescapeOrganiser {
 
         private void Button_Click(object sender, RoutedEventArgs e) {
             if (String.IsNullOrWhiteSpace(FindItemsTextBox.Text)) return;
-            Earnings.ItemNames.Add(FindItemsTextBox.Text);
+            Earnings.ItemNames.Add(FindItemsTextBox.Text.Trim().Capitalize());
             this.ItemsView.UpdateLayout();
             this.FindItemsTextBox.Text = "";
         }
@@ -151,6 +168,10 @@ namespace RunescapeOrganiser {
         private void Button_Click_1(object sender, RoutedEventArgs e) {
             AddSoldItem();
             UpdateEarningsView();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e) {
+            mainWindow.SaveProgress();
         }
     }
 }

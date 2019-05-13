@@ -81,7 +81,7 @@ namespace RunescapeOrganiser {
         public void DrawChart() {
             var chartData = SlayerTasksView.Items.Cast<DailySlayerTaskList>();
             if (chartData.Count() <= 1) {
-                MessageBox.Show("Not enough data to draw a chart", "ChartError", MessageBoxButton.OK);
+                MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
                 return;
             }
             chartProcess = new Process();
@@ -136,6 +136,10 @@ namespace RunescapeOrganiser {
             if (chartThread != null && chartThread.IsAlive) return;
             chartThread = new Thread(() => DrawChart());
             chartThread.Start();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e) {//save progress
+            mainWindow.SaveProgress();
         }
     }
 }

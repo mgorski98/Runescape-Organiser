@@ -56,6 +56,7 @@
                 </ScrollViewer>
             </Grid>
         </GroupBox>
+        <Button Click="Button_Click_2" Content="Save all progress" HorizontalAlignment="Left" Margin="842,10,0,0" VerticalAlignment="Top" Width="98" Height="30"/>
 
 
     </Grid>

@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
+using Utils;
 
 namespace RunescapeOrganiser {
-    public class DailyEarnings {
+    public class DailyEarnings : IJsonSerializable {
         public string Date {
             get;set;
         }
@@ -19,8 +20,13 @@ namespace RunescapeOrganiser {
 
         public DailyEarnings() {
             this.SoldItems = new ObservableCollection<SoldItem>();
-            DateTime dt = DateTime.Now;
-            this.Date = String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
+            this.Date = DateUtils.GetTodaysDate();
+        }
+
+        ~DailyEarnings() {
+            this.SaveToJson();
+            this.Date = null;
+            this.SoldItems = null;
         }
 
         public void Add(SoldItem item) {
@@ -32,8 +38,19 @@ namespace RunescapeOrganiser {
             }
             this.SoldItems.Add(item);
             item.SetOwner(this);
+            this.SortDesc();
         }
-        
+
+        public void SortDesc() {
+            List<SoldItem> items = new List<SoldItem>(this.SoldItems);
+            items.Sort((i1, i2) => i1.ItemName.CompareTo(i2.ItemName));
+            this.SoldItems = new ObservableCollection<SoldItem>(items);
+        }
+
+        public void UpdateOwners() {
+            foreach (var item in this.SoldItems) item.SetOwner(this);
+        }
+
         public void Remove(SoldItem item) {
             if (item == null) return;
             this.SoldItems.Remove(item);
@@ -56,11 +73,11 @@ namespace RunescapeOrganiser {
             return SoldItems.Sum(si => si.Price);
         }
 
-        private void SaveToJson() {
-            string path = @"../../Earnings/" + "Earnings from " + this.Date + @".ern";
+        public void SaveToJson() {
+            string path = @"../../Earnings/" + "Earnings from " + this.Date.Replace("/", ".") + ".ern";
             using (var fs = new FileStream(path, FileMode.Create)) {
                 using (var writer = new StreamWriter(fs)) {
-                    writer.Write(JsonConvert.SerializeObject(this.SoldItems, Formatting.Indented));
+                    writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
                 }
             }
         }
@@ -71,18 +88,16 @@ namespace RunescapeOrganiser {
             sb.Append("Overview of earnings from ");
             sb.Append(this.Date);
             sb.Append(":\n");
-            sb.Append("Total money earned: ");
-            sb.Append(this.TotalMoneyEarned().ToString());
-            sb.Append("gp\n");
-            sb.Append("Items sold: \n");
-            foreach (var item in SoldItems) {
-                sb.Append("- ");
-                sb.Append(item.Amount.ToString());
-                sb.Append("x ");
-                sb.Append(item.ItemName);
-                sb.Append(" -> ");
-                sb.Append(item.Price.ToString("0.##"));
+            if (this.SoldItems.Count > 0) {
+                sb.Append("Total money earned: ");
+                sb.Append(this.TotalMoneyEarned().ToString("0.##"));
                 sb.Append("gp\n");
+                sb.Append("Items sold: \n");
+                foreach (var item in SoldItems) {
+                    sb.Append(item.ToInfoString());
+                }
+            } else {
+                sb.Append("None (yet)");
             }
             return sb.ToString();
         }

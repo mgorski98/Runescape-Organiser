@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RunescapeOrganiser {
     public class SoldItem {
+
         public ulong Amount {
             get;set;
         }
@@ -39,26 +40,33 @@ namespace RunescapeOrganiser {
             sb.Append(this.Amount.ToString());
             sb.Append("\n");
             sb.Append("Total price: ");
-            sb.Append(this.Price.ToString());
+            sb.Append(this.Price.ToString("0.##"));
             sb.Append("gp");
+            return sb.ToString();
+        }
+
+        public string ToInfoString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("- ");
+            sb.Append(this.Amount.ToString());
+            sb.Append("x ");
+            sb.Append(this.ItemName);
+            sb.Append(" -> ");
+            sb.Append(this.Price.ToString("0.##"));
+            sb.Append("gp\n");
             return sb.ToString();
         }
 
         public void SetOwner(DailyEarnings newOwner) => this.owner = newOwner;
         public DailyEarnings GetOwner() => this.owner;
-
         public override bool Equals(object obj) {
-            return ItemName.Equals(obj);
+            if (obj is SoldItem item) {
+                return this.ItemName.Equals(item.ItemName);
+            }
+            return false;
         }
-        public override int GetHashCode() {
-            return base.GetHashCode();
-        }
-        public static bool operator==(SoldItem si1, SoldItem si2) {
-            return si1?.Equals(si2) ?? false;
-        }
-        public static bool operator !=(SoldItem si1, SoldItem si2) {
-            return !si1?.Equals(si2) ?? false;
-        }
-       
+        public override int GetHashCode() => base.GetHashCode();
+        public static bool operator==(SoldItem si1, SoldItem si2) => si1?.Equals(si2) ?? false;
+        public static bool operator !=(SoldItem si1, SoldItem si2) => !si1?.Equals(si2) ?? false;
     }
 }

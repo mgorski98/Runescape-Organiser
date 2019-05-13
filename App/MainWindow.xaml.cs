@@ -1,29 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
+
+//TODO: Add a button to save all current changes (new item names, new slayer tasks, new earnings etc.)
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
 
-        //TODO: add a chart drawing for earnings and slayer xp gained
         public ObservableCollection<DailySlayerTaskList> DailySlayerTasks {
             get;set;
         }
@@ -43,10 +36,15 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
+        private bool FinishedSaving {
+            get;set;
+        }
+
         private SlayerPage slayerPage;
         private EarningsPage earningsPage;
 
         public MainWindow() {
+            this.FinishedSaving = true;
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>();
             this.@DailyEarnings = new ObservableCollection<DailyEarnings>();
             this.InitializeComponent();
@@ -55,6 +53,16 @@ namespace RunescapeOrganiser {
             Earnings.InitItemNames();
             this.earningsPage.InitItemsView();
             this.LoadTasks();
+            this.LoadEarnings();
+            foreach (var element in @DailyEarnings) {
+                element.SortDesc();
+            }
+            foreach (var item in DailyEarnings) {
+                item.UpdateOwners();
+            }
+            foreach (var item in DailySlayerTasks) {
+                item.UpdateOwners();
+            }
             GC.Collect();
         }
 
@@ -65,7 +73,6 @@ namespace RunescapeOrganiser {
                 Thread t = new Thread(() => LoadTaskFromJson(file));
                 threadList.Add(t);
                 t.Start();
-
             }
             while (!this.FinishedLoading) {
                 this.FinishedLoading = threadList.All(t => !t.IsAlive);
@@ -88,7 +95,7 @@ namespace RunescapeOrganiser {
                 this.FinishedLoading2 = threads.All(t => !t.IsAlive);
             }
             List<DailyEarnings> tempList = new List<DailyEarnings>(this.@DailyEarnings);
-            tempList = tempList.OrderByDescending(earning => earning.Date).ToList();
+            tempList = tempList.OrderByDescending(earning => earning?.Date).ToList();
             this.@DailyEarnings = new ObservableCollection<DailyEarnings>(tempList);
             this.Dispatcher.Invoke(() => earningsPage.EarningsView.ItemsSource = this.@DailyEarnings);
         }
@@ -143,19 +150,45 @@ namespace RunescapeOrganiser {
 
         public void ShowAddTaskWindow() {
             try {
-                var t = Application.Current.Windows.OfType<TaskAddWindow>().ToArray()[0];
-            } catch (IndexOutOfRangeException) {
+                var t = Application.Current.Windows.OfType<TaskAddWindow>().ElementAt(0);
+            } catch (ArgumentOutOfRangeException) {
                 var taskadd = new TaskAddWindow();
                 taskadd.Show();
                 taskadd.BossListView.Items.Refresh();
+                taskadd.HideBossControls();
             }
+        }
+
+        private void SaveAllProgress() {
+            List<IJsonSerializable> toSave = new List<IJsonSerializable>();
+            toSave.AddRange(this.DailyEarnings);
+            toSave.AddRange(this.DailySlayerTasks);
+            List<Thread> threads = new List<Thread>();
+            toSave.ForEach(elem => {
+                Thread t = new Thread(() => elem.SaveToJson());
+                threads.Add(t);
+                t.Start();
+            });
+
+            while (!this.FinishedSaving) {
+                this.FinishedSaving = threads.All(t => !t.IsAlive);
+            }
+
+            this.FinishedSaving = true;
+            MessageBox.Show("Progress saved successfully!", "Saving", MessageBoxButton.OK);
         }
 
 
         //event handlers
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+        private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
             slayerPage.KillAndClearChartProcess();
             Earnings.DumpToDisk();
+        }
+
+        public void SaveProgress() {
+            if (!this.FinishedSaving) return;
+            Thread t = new Thread(() => this.SaveAllProgress());
+            t.Start();
         }
     }
 }

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Utils;
 
 namespace RunescapeOrganiser {
-    public class DailySlayerTaskList {
+    public class DailySlayerTaskList : IJsonSerializable {
 
         public ObservableCollection<SlayerTask> SlayerTasks {
             get;set;
@@ -19,7 +19,6 @@ namespace RunescapeOrganiser {
 
         public DailySlayerTaskList() {
             this.SlayerTasks = new ObservableCollection<SlayerTask>();
-            DateTime dt = DateTime.Now;
             this.TaskDate = DateUtils.GetTodaysDate();//String.Format("{0}/{1}/{2}", dt.Day < 10 ? "0" + dt.Day.ToString() : dt.Day.ToString(), dt.Month < 10 ? "0" + dt.Month.ToString() : dt.Month.ToString(), dt.Year);
         }
 
@@ -39,9 +38,13 @@ namespace RunescapeOrganiser {
             this.SlayerTasks.Remove(task);
         }
 
+        public void UpdateOwners() {
+            foreach (var task in this.SlayerTasks) task.SetOwner(this);
+        }
+
         public void SaveToJson() {
             string path = @"../../Tasks/" + "Tasks From " + this.TaskDate.Replace('/', '.') + ".tsk";
-            using (var fs = new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate)) {
+            using (var fs = new System.IO.FileStream(path, System.IO.FileMode.Create)) {
                 using (var writer = new System.IO.StreamWriter(fs)) {
                     writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
                 }

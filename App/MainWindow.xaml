@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RunescapeOrganiser"
         mc:Ignorable="d"
-        Title="RuneScape Organiser" Height="600" Width="1000" ResizeMode="CanMinimize" Closing="Window_Closing">
+        Title="RuneScape Organiser" Height="600" Width="1000" ResizeMode="CanMinimize" Closing="OnWindowClose">
     <Grid>
         <TabControl Name="Tabs" HorizontalAlignment="Center" Height="537" Margin="0,0,0,0" VerticalAlignment="Center" Width="960">
             

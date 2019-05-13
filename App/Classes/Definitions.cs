@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 
 
-
 namespace RunescapeOrganiser {
 
     public enum SlayerMonsters : byte {
@@ -308,5 +307,9 @@ namespace RunescapeOrganiser {
             }
             ItemNames = new HashSet<string>(ItemNames.OrderBy(s => s));
         }
+    }
+
+    public interface IJsonSerializable {
+        void SaveToJson();
     }
 }
