@@ -53,6 +53,7 @@ namespace RunescapeOrganiser {
             this.ApplicationInit();
             Slayer.InitSlayerTables();
             Earnings.InitItemNames();
+            this.earningsPage.InitItemsView();
             this.LoadTasks();
             GC.Collect();
         }
@@ -146,10 +147,12 @@ namespace RunescapeOrganiser {
             } catch (IndexOutOfRangeException) {
                 var taskadd = new TaskAddWindow();
                 taskadd.Show();
-                taskadd.GetHideDelegate()();
+                taskadd.BossListView.Items.Refresh();
             }
         }
 
+
+        //event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             slayerPage.KillAndClearChartProcess();
             Earnings.DumpToDisk();

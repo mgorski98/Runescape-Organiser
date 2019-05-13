@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
+using System.Linq;
 
 
 
@@ -305,7 +306,7 @@ namespace RunescapeOrganiser {
             using (var reader = new StreamReader(ItemNamesFilePath)) {
                 ItemNames = JsonConvert.DeserializeObject<HashSet<string>>(reader.ReadToEnd());
             }
+            ItemNames = new HashSet<string>(ItemNames.OrderBy(s => s));
         }
     }
-
 }

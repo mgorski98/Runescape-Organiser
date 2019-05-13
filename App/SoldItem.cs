@@ -40,6 +40,7 @@ namespace RunescapeOrganiser {
             sb.Append("\n");
             sb.Append("Total price: ");
             sb.Append(this.Price.ToString());
+            sb.Append("gp");
             return sb.ToString();
         }
 

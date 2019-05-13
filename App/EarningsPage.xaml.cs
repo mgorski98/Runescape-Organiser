@@ -30,8 +30,12 @@ namespace RunescapeOrganiser {
         public EarningsPage() {
             InitializeComponent();
             mainWindow = Application.Current.Windows.OfType<MainWindow>().ElementAt(0);
+        }
+
+        public void InitItemsView() {
             this.ItemsView.ItemsSource = Earnings.ItemNames;
             this.ItemsView.UpdateLayout();
+            this.ItemsView.Items.Refresh();
         }
 
         public DailyEarnings AddDaily() {
@@ -44,13 +48,17 @@ namespace RunescapeOrganiser {
                 }
             }
             var newDaily = new DailyEarnings();
-            List<DailyEarnings> tempList = new List<DailyEarnings>(mainWindow.@DailyEarnings);
-            tempList.Add(newDaily);
+            List<DailyEarnings> tempList = new List<DailyEarnings>(mainWindow.@DailyEarnings) { newDaily };
             tempList = tempList.OrderByDescending(s => s.Date).ToList();
             mainWindow.DailyEarnings = new System.Collections.ObjectModel.ObservableCollection<DailyEarnings>(tempList);
             EarningsView.ItemsSource = mainWindow.DailyEarnings;
-            EarningsView.UpdateLayout();
+            UpdateEarningsView();
             return newDaily;
+        }
+
+        public void UpdateEarningsView() {
+            EarningsView.UpdateLayout();
+            EarningsView.Items.Refresh();
         }
 
         public void DeleteItem() {
@@ -60,14 +68,16 @@ namespace RunescapeOrganiser {
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the daily?", "Delete Daily", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes) {
                     mainWindow.DailyEarnings.Remove(e);
-                    EarningsView.UpdateLayout();
+                    UpdateEarningsView();
+                    ItemInfo.Text = "";
                 }
             }
             if (o is SoldItem item) {
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Delete", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes) {
                     item.GetOwner().Remove(item);
-                    EarningsView.UpdateLayout();
+                    UpdateEarningsView();
+                    ItemInfo.Text = "";
                 }
             }
         }
@@ -98,12 +108,11 @@ namespace RunescapeOrganiser {
             }
             DailyEarnings parent = AddDaily();
             parent.Add(item);
-            EarningsView.Items.Refresh();
-            EarningsView.UpdateLayout();
+            UpdateEarningsView();
         }
 
         private void EarningsView_Selected(object sender, RoutedEventArgs e) {
-
+            ItemInfo.Text = EarningsView.SelectedItem?.ToString();
         }
 
         private void AddDailyButton_Click(object sender, RoutedEventArgs e) {
@@ -141,7 +150,7 @@ namespace RunescapeOrganiser {
 
         private void Button_Click_1(object sender, RoutedEventArgs e) {
             AddSoldItem();
-            EarningsView.UpdateLayout();
+            UpdateEarningsView();
         }
     }
 }

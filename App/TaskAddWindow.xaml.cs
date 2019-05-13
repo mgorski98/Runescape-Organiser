@@ -80,8 +80,6 @@ namespace RunescapeOrganiser {
             return s;
         }
 
-        public Action GetHideDelegate() => HideBossControls;
-
         private void HideBossControls () {
             BossListView.Visibility = Visibility.Hidden;
             BossesLabel.Visibility = Visibility.Hidden;
@@ -103,6 +101,16 @@ namespace RunescapeOrganiser {
             CodexBonuses.SelectedItem = CodexBonuses.Items.GetItemAt(0);
         }
 
+        private void FindMatchingBosses() {
+            if (MonsterListView.SelectedItem == null) return;
+            string monsterName = MonsterListView.SelectedItem as string;
+            SlayerMonsters monsterType = Slayer.SlayerLookUpTable.Where(entry => entry.Value.Key == monsterName).ToArray()[0].Key;
+            var bossTypes = Slayer.BossMonsterGroups.Where(entry => entry.Value.Contains(monsterType)).Select(en => en.Key);
+            string[] bossNames = bossTypes.Select(entry => Slayer.BossSlayerLookUpTable[entry].Key).ToArray();
+            BossListView.ItemsSource = bossNames;
+            BossListView.UpdateLayout();
+        }
+
         public void SetNotes(string[] notes) {
             this.notes = notes;
         }
@@ -116,7 +124,30 @@ namespace RunescapeOrganiser {
             this.Close();
         }
 
+
+
         //event handlers
+
+        private void BossCheckBox_Unchecked(object sender, RoutedEventArgs e) {
+            HideBossControls();
+        }
+
+        private void MonsterSearch(object sender, TextChangedEventArgs e) {
+            MonsterListView.ItemsSource = monsterNames.Where(name => name.ToLower().Contains(FindMonstersTextBox.Text.ToLower())).OrderBy(s => s);
+        }
+
+        private void CancelledCheckbox_Checked(object sender, RoutedEventArgs e) {
+            ExtendedCheckBox.IsChecked = false;
+        }
+
+        private void ExtendedCheckBox_Checked(object sender, RoutedEventArgs e) {
+            CancelledCheckbox.IsChecked = false;
+        }
+
+        private void ListViewItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            FindMatchingBosses();
+        }
+
         private void TextBoxNumberValidation(object sender, TextCompositionEventArgs e) {
             e.Handled = !StringUtils.IsNumeric(e.Text);
         }
@@ -137,36 +168,6 @@ namespace RunescapeOrganiser {
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e) {
             ShowBossControls();
-            FindMatchingBosses();
-        }
-
-        private void FindMatchingBosses() {
-            if (MonsterListView.SelectedItem == null) return;
-            string monsterName = MonsterListView.SelectedItem as string;
-            SlayerMonsters monsterType = Slayer.SlayerLookUpTable.Where(entry => entry.Value.Key == monsterName).ToArray()[0].Key;
-            var bossTypes = Slayer.BossMonsterGroups.Where(entry => entry.Value.Contains(monsterType)).Select(en => en.Key);
-            string[] bossNames = bossTypes.Select(entry => Slayer.BossSlayerLookUpTable[entry].Key).ToArray();
-            BossListView.ItemsSource = bossNames;
-            BossListView.UpdateLayout();
-        }
-
-        private void BossCheckBox_Unchecked(object sender, RoutedEventArgs e) {
-            HideBossControls();
-        }
-
-        private void MonsterSearch(object sender, TextChangedEventArgs e) {
-            MonsterListView.ItemsSource = monsterNames.Where(name => name.ToLower().Contains(FindMonstersTextBox.Text.ToLower())).OrderBy(s => s);
-        }
-
-        private void CancelledCheckbox_Checked(object sender, RoutedEventArgs e) {
-            ExtendedCheckBox.IsChecked = false;
-        }
-
-        private void ExtendedCheckBox_Checked(object sender, RoutedEventArgs e) {
-            CancelledCheckbox.IsChecked = false;
-        }
-
-        private void ListViewItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             FindMatchingBosses();
         }
     }

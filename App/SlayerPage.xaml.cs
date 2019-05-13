@@ -72,21 +72,7 @@ namespace RunescapeOrganiser {
             }
         }
 
-        private void AddTaskWindowShowEvent(object sender, RoutedEventArgs e) {//add task//actually, should only show the window
-            mainWindow.ShowAddTaskWindow();
-        }
-
-        private void AddDailyEvent(object sender, RoutedEventArgs e) {//add daily
-            AddDaily();
-        }
-
-        private void DeleteEvent(object sender, RoutedEventArgs e) {//delete item
-            DeleteTask();
-        }
-
-        private void SlayerTasksView_Selected(object sender, RoutedEventArgs e) {
-            UpdateTaskInfoContents();
-        }
+        
 
         public void UpdateTaskInfoContents() {
             TaskInfo.Text = SlayerTasksView.SelectedItem?.ToString();
@@ -120,19 +106,36 @@ namespace RunescapeOrganiser {
             chartProcess.WaitForExit();
         }
 
-        private void DrawChartEvent(object sender, RoutedEventArgs e) {
-            if (chartThread != null && chartThread.IsAlive) return;
-            chartThread = new Thread(() => DrawChart());
-            chartThread.Start();
-        }
-
         public void KillAndClearChartProcess() {
             try {
                 mainWindow = null;
                 chartProcess?.Kill();
                 chartProcess?.Dispose();
                 chartThread = null;
+                chartProcess = null;
             } catch (Exception) { }
+        }
+
+        private void AddTaskWindowShowEvent(object sender, RoutedEventArgs e) {
+            mainWindow.ShowAddTaskWindow();
+        }
+
+        private void AddDailyEvent(object sender, RoutedEventArgs e) {
+            AddDaily();
+        }
+
+        private void DeleteEvent(object sender, RoutedEventArgs e) {
+            DeleteTask();
+        }
+
+        private void SlayerTasksView_Selected(object sender, RoutedEventArgs e) {
+            UpdateTaskInfoContents();
+        }
+
+        private void DrawChartEvent(object sender, RoutedEventArgs e) {
+            if (chartThread != null && chartThread.IsAlive) return;
+            chartThread = new Thread(() => DrawChart());
+            chartThread.Start();
         }
     }
 }

@@ -17,10 +17,6 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        public decimal TotalMoneyEarned {
-            get;set;
-        }
-
         public DailyEarnings() {
             this.SoldItems = new ObservableCollection<SoldItem>();
             DateTime dt = DateTime.Now;
@@ -56,6 +52,10 @@ namespace RunescapeOrganiser {
             return null;
         }
 
+        public decimal TotalMoneyEarned() {
+            return SoldItems.Sum(si => si.Price);
+        }
+
         private void SaveToJson() {
             string path = @"../../Earnings/" + "Earnings from " + this.Date + @".ern";
             using (var fs = new FileStream(path, FileMode.Create)) {
@@ -67,7 +67,24 @@ namespace RunescapeOrganiser {
 
         // overrides and operators
         public override string ToString() {
-            return base.ToString();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Overview of earnings from ");
+            sb.Append(this.Date);
+            sb.Append(":\n");
+            sb.Append("Total money earned: ");
+            sb.Append(this.TotalMoneyEarned().ToString());
+            sb.Append("gp\n");
+            sb.Append("Items sold: \n");
+            foreach (var item in SoldItems) {
+                sb.Append("- ");
+                sb.Append(item.Amount.ToString());
+                sb.Append("x ");
+                sb.Append(item.ItemName);
+                sb.Append(" -> ");
+                sb.Append(item.Price.ToString("0.##"));
+                sb.Append("gp\n");
+            }
+            return sb.ToString();
         }
 
         public override bool Equals(object obj) {
