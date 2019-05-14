@@ -9,8 +9,10 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
-
-//TODO: Add a button to save all current changes (new item names, new slayer tasks, new earnings etc.)
+//TODO: Add loading expenses from Json
+//TODO: Fill Expenses page with controls
+//TODO: populate expenses page controls with content
+//TODO: set up a hierarchical structure with daily expenses class
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,8 +27,13 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
+        public ObservableCollection<DailyExpenses> @DailyExpenses {
+            get;set;
+        }
+
         private static object threadLock = new object();
         private static object threadLock2 = new object();
+        private static object threadLock3 = new object();
 
         private bool FinishedLoading {
             get; set;
@@ -36,17 +43,24 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
+        private bool FinishedLoading3 {
+            get;set;
+        }
+
         private bool FinishedSaving {
             get;set;
         }
 
         private SlayerPage slayerPage;
         private EarningsPage earningsPage;
+        private BossLogsPage bossLogsPage;
+        private ExpensesPage expensesPage;
 
         public MainWindow() {
             this.FinishedSaving = true;
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>();
             this.@DailyEarnings = new ObservableCollection<DailyEarnings>();
+            this.@DailyExpenses = new ObservableCollection<DailyExpenses>();
             this.InitializeComponent();
             this.ApplicationInit();
             Slayer.InitSlayerTables();
@@ -54,6 +68,7 @@ namespace RunescapeOrganiser {
             this.earningsPage.InitItemsView();
             this.LoadTasks();
             this.LoadEarnings();
+          //  this.LoadExpenses();
             foreach (var element in @DailyEarnings) {
                 element.SortDesc();
             }
@@ -100,6 +115,24 @@ namespace RunescapeOrganiser {
             this.Dispatcher.Invoke(() => earningsPage.EarningsView.ItemsSource = this.@DailyEarnings);
         }
 
+        private void LoadExpenses() {
+            string[] files = Directory.GetFiles(@"../../Expenses");
+            List<Thread> threads = new List<Thread>();
+            foreach (var file in files) {
+                Thread t = new Thread(() => LoadDailyExpensesFromJson(file));
+                threads.Add(t);
+                t.Start();
+            }
+            while (!this.FinishedLoading3) {
+                this.FinishedLoading3 = threads.All(t => !t.IsAlive);
+            }
+            List<DailyExpenses> tempList = new List<DailyExpenses>(this.@DailyExpenses);
+            tempList = tempList.OrderByDescending(expense => expense?.Date).ToList();
+            this.@DailyExpenses = new ObservableCollection<DailyExpenses>(tempList);
+            //TODO: Invoke update of expenses treeview when it is set up
+            //this.Dispatcher.Invoke(() => );
+        }
+
         private void LoadDailyEarningsFromJson(string path) {
             if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
             DailyEarnings er = null;
@@ -127,25 +160,55 @@ namespace RunescapeOrganiser {
             }
         }
 
+        private void LoadDailyExpensesFromJson(string path) {
+            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+
+            DailyExpenses ex = null;
+
+            using (var reader = new StreamReader(path)) {
+                ex = JsonConvert.DeserializeObject<DailyExpenses>(reader.ReadToEnd());
+            }
+
+            lock (threadLock3) {
+                @DailyExpenses.Add(ex);
+            }
+        }
+
         private void ApplicationInit() {
-            TabItem item1, item2;
+            TabItem item1, item2, item3, item4;
             item1 = new TabItem();
             item2 = new TabItem();
-            Frame f1, f2;
+            item3 = new TabItem();
+            item4 = new TabItem();
+            Frame f1, f2, f3, f4;
             f1 = new Frame();
             f2 = new Frame();
+            f3 = new Frame();
+            f4 = new Frame();
             f1.Background = Brushes.LightGray;
             f2.Background = Brushes.LightGray;
+            f3.Background = Brushes.LightGray;
+            f4.Background = Brushes.LightGray;
             item1.Header = "Slayer tasks";
             item2.Header = "Earnings";
+            item4.Header = "Boss logs";
+            item3.Header = "Expenses";
             slayerPage = new SlayerPage();
             f1.Content = slayerPage;
             earningsPage = new EarningsPage();
             f2.Content = earningsPage;
+            bossLogsPage = new BossLogsPage();
+            f4.Content = bossLogsPage;
+            expensesPage = new ExpensesPage();
+            f3.Content = expensesPage;
             item1.Content = f1;
             item2.Content = f2;
+            item3.Content = f3;
+            item4.Content = f4;
             Tabs.Items.Add(item1);
             Tabs.Items.Add(item2);
+            Tabs.Items.Add(item3);
+            Tabs.Items.Add(item4);
         }
 
         public void ShowAddTaskWindow() {
@@ -164,6 +227,9 @@ namespace RunescapeOrganiser {
             toSave.AddRange(this.DailyEarnings);
             toSave.AddRange(this.DailySlayerTasks);
             List<Thread> threads = new List<Thread>();
+            Thread items = new Thread(() => Earnings.DumpToDisk());
+            threads.Add(items);
+            items.Start();
             toSave.ForEach(elem => {
                 Thread t = new Thread(() => elem.SaveToJson());
                 threads.Add(t);
@@ -182,6 +248,7 @@ namespace RunescapeOrganiser {
         //event handlers
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
             slayerPage.KillAndClearChartProcess();
+            earningsPage.KillAndClearChartProcess();
             Earnings.DumpToDisk();
         }
 
@@ -189,6 +256,29 @@ namespace RunescapeOrganiser {
             if (!this.FinishedSaving) return;
             Thread t = new Thread(() => this.SaveAllProgress());
             t.Start();
+        }
+
+        public void DrawChart() {
+            this.Dispatcher.Invoke(() => {
+                if (this.Tabs.SelectedItem == null) return;
+                if (Tabs.SelectedItem is TabItem ti) {
+                    if (ti.Content is Frame f) {
+                        if (f.Content is SlayerPage p1) {
+                            (new Thread(() => p1.DrawChart())).Start();
+                        } else if (f.Content is EarningsPage p2) {
+                            (new Thread(() => p2.DrawChart())).Start();
+                        }
+                    }
+                }
+            });
+        }
+
+        private void SaveAllProgressEvent(object sender, RoutedEventArgs e) {
+            this.SaveProgress();
+        }
+
+        private void DrawChartMainWindowEvent(object sender, RoutedEventArgs e) {
+            (new Thread(() => this.DrawChart())).Start();
         }
     }
 }

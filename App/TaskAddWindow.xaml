@@ -16,8 +16,8 @@
                 <CheckBox Checked="ExtendedCheckBox_Checked" Name="ExtendedCheckBox"  Content="Extended" HorizontalAlignment="Left" Margin="249,72,0,0" VerticalAlignment="Top" Width="101"/>
             </Grid>
         </GroupBox>
-        <Button Click="Button_Click" Content="Done" HorizontalAlignment="Center" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="75"/>
-        <CheckBox Name="BossCheckBox" Unchecked="BossCheckBox_Unchecked" Checked="CheckBox_Checked" Content="Boss task" HorizontalAlignment="Left" Margin="14,293,0,0" VerticalAlignment="Top" Width="106"/>
+        <Button Click="AddTaskEvent" Content="Done" HorizontalAlignment="Center" Margin="0,0,0,30" VerticalAlignment="Bottom" Width="75"/>
+        <CheckBox Name="BossCheckBox" Unchecked="BossCheckBox_Unchecked" Checked="BossCheckBox_Checked" Content="Boss task" HorizontalAlignment="Left" Margin="14,293,0,0" VerticalAlignment="Top" Width="106"/>
         <ListView Name="BossListView" HorizontalAlignment="Left" Height="100" Margin="9,337,0,0" VerticalAlignment="Top" Width="400" Foreground="Black">
             <ListView.View>
                 <GridView>

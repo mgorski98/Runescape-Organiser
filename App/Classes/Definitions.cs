@@ -105,7 +105,7 @@ namespace RunescapeOrganiser {
         SlayerContract
     }
 
-    public struct Slayer { //TODO: add a lookup table of monsters with Slayer Contract available
+    public struct Slayer { 
         public static Dictionary<SlayerMonsters, KeyValuePair<string, decimal>> SlayerLookUpTable
             = new Dictionary<SlayerMonsters, KeyValuePair<string, decimal>>();
         public static Dictionary<BossSlayerMonsters, KeyValuePair<string, decimal>> BossSlayerLookUpTable
@@ -291,7 +291,7 @@ namespace RunescapeOrganiser {
 
         public static HashSet<string> ItemNames = new HashSet<string>();
 
-        [System.Obsolete]
+     //   [System.Obsolete]
         public static void DumpToDisk() {
             ItemNames.Add("High Level Alchemy");
             using (var fs = new FileStream(ItemNamesFilePath, FileMode.Create)) {

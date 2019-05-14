@@ -14,12 +14,12 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        public ObservableCollection<SoldItem> SoldItems {
+        public ObservableCollection<Item> SoldItems {
             get;set;
         }
 
         public DailyEarnings() {
-            this.SoldItems = new ObservableCollection<SoldItem>();
+            this.SoldItems = new ObservableCollection<Item>();
             this.Date = DateUtils.GetTodaysDate();
         }
 
@@ -29,9 +29,9 @@ namespace RunescapeOrganiser {
             this.SoldItems = null;
         }
 
-        public void Add(SoldItem item) {
+        public void Add(Item item) {
             if (item == null) return;
-            SoldItem found = Find(item);
+            Item found = Find(item);
             if (found != null) {
                 found.Add(item);
                 return;
@@ -42,25 +42,25 @@ namespace RunescapeOrganiser {
         }
 
         public void SortDesc() {
-            List<SoldItem> items = new List<SoldItem>(this.SoldItems);
+            List<Item> items = new List<Item>(this.SoldItems);
             items.Sort((i1, i2) => i1.ItemName.CompareTo(i2.ItemName));
-            this.SoldItems = new ObservableCollection<SoldItem>(items);
+            this.SoldItems = new ObservableCollection<Item>(items);
         }
 
         public void UpdateOwners() {
             foreach (var item in this.SoldItems) item.SetOwner(this);
         }
 
-        public void Remove(SoldItem item) {
+        public void Remove(Item item) {
             if (item == null) return;
             this.SoldItems.Remove(item);
         }
 
-        public bool Contains(SoldItem item) {
+        public bool Contains(Item item) {
             return this.SoldItems.Contains(item);
         }
 
-        public SoldItem Find(SoldItem item) {
+        public Item Find(Item item) {
             foreach (var _item in this.SoldItems) {
                 if (_item.ItemName == item.ItemName) {
                     return _item;

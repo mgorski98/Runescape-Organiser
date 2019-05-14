@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RunescapeOrganiser {
-    public class SoldItem {
+    public class Item {
 
         public ulong Amount {
             get;set;
@@ -19,13 +19,13 @@ namespace RunescapeOrganiser {
 
         private DailyEarnings owner;
 
-        public SoldItem(string name, ulong amount, decimal Price) {
+        public Item(string name, ulong amount, decimal Price) {
             this.ItemName = name;
             this.Amount = amount;
             this.Price = Price;
         }
 
-        public void Add(SoldItem si) {
+        public void Add(Item si) {
             if (si == null || si.ItemName != this.ItemName) return;
             this.Price += si.Price;
             this.Amount += si.Amount;
@@ -60,13 +60,13 @@ namespace RunescapeOrganiser {
         public void SetOwner(DailyEarnings newOwner) => this.owner = newOwner;
         public DailyEarnings GetOwner() => this.owner;
         public override bool Equals(object obj) {
-            if (obj is SoldItem item) {
+            if (obj is Item item) {
                 return this.ItemName.Equals(item.ItemName);
             }
             return false;
         }
         public override int GetHashCode() => base.GetHashCode();
-        public static bool operator==(SoldItem si1, SoldItem si2) => si1?.Equals(si2) ?? false;
-        public static bool operator !=(SoldItem si1, SoldItem si2) => !si1?.Equals(si2) ?? false;
+        public static bool operator==(Item si1, Item si2) => si1?.Equals(si2) ?? false;
+        public static bool operator !=(Item si1, Item si2) => !si1?.Equals(si2) ?? false;
     }
 }

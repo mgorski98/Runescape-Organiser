@@ -28,13 +28,13 @@
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
-        <GroupBox Background="White" Header="Task Info" HorizontalAlignment="Left" Height="288" Margin="431,191,0,0" VerticalAlignment="Top" Width="446" BorderBrush="Black">
+        <GroupBox Background="White" Header="Task Info" HorizontalAlignment="Left" Height="288" Margin="473,191,0,0" VerticalAlignment="Top" Width="446" BorderBrush="Black">
             <ScrollViewer HorizontalAlignment="Left" Height="244" Margin="10,10,0,0" VerticalAlignment="Top" Width="411" VerticalScrollBarVisibility="Auto">
                 <TextBlock Name="TaskInfo" TextWrapping="Wrap" FontFamily="Microsoft Sans Serif" FontSize="16"/>
             </ScrollViewer>
         </GroupBox>
         <Label Content="Slayer Tasks" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top"/>
-        <GroupBox Header="Edit Options" HorizontalAlignment="Left" Height="125" Margin="673,61,0,0" VerticalAlignment="Top" Width="204" BorderBrush="Black" Background="White">
+        <GroupBox Header="Edit Options" HorizontalAlignment="Left" Height="125" Margin="715,61,0,0" VerticalAlignment="Top" Width="204" BorderBrush="Black" Background="White">
             <Grid HorizontalAlignment="Center" Height="105" Margin="0,0,0,0" VerticalAlignment="Center" Width="200">
                 <Button Click="AddTaskWindowShowEvent" Content="Add Task" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Background="#FFDDDDDD"/>
                 <Button Click="AddDailyEvent" Content="Add Daily" HorizontalAlignment="Left" Margin="115,10,0,0" VerticalAlignment="Top" Width="75"/>
@@ -42,7 +42,12 @@
                 <Button Click="DrawChartEvent" Content="Show XP Graph" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="75" FontSize="10" Height="19"/>
             </Grid>
         </GroupBox>
-        <Button Click="Button_Click" Content="Save all progress" HorizontalAlignment="Left" Margin="842,10,0,0" VerticalAlignment="Top" Width="98" Height="30"/>
+        <!--<Button HorizontalAlignment="Left" Margin="554,22,0,0" VerticalAlignment="Top" Width="48" Height="48">
+            <Button.Background>
+                <ImageBrush ImageSource="Images/SaveIcon.png" Stretch="Fill"></ImageBrush>
+            </Button.Background>
+        </Button>-->
+
 
     </Grid>
 </Page>

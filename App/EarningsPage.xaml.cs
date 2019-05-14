@@ -24,8 +24,8 @@ namespace RunescapeOrganiser {
     public partial class EarningsPage : Page {
 
         public MainWindow mainWindow = null;
-        public Process chartProcess = null;
-        public Thread chartThread = null;
+        public bool processExited = true;
+        private Process chartProcess = null;
 
         public EarningsPage() {
             InitializeComponent();
@@ -72,7 +72,7 @@ namespace RunescapeOrganiser {
                     ItemInfo.Text = "";
                 }
             }
-            if (o is SoldItem item) {
+            if (o is Item item) {
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Delete", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes) {
                     item.GetOwner().Remove(item);
@@ -83,6 +83,7 @@ namespace RunescapeOrganiser {
         }
 
         public void DrawChart() {
+            if (processExited == false) return;
             var chartData = EarningsView.Items.Cast<DailyEarnings>();
             if (chartData.Count() <= 1) {
                 MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
@@ -90,21 +91,31 @@ namespace RunescapeOrganiser {
             }
             chartProcess = new Process();
             StringBuilder args = new StringBuilder();
-
+            args.Append(chartData.Count().ToString() + ' ');
+            foreach (var element in chartData) {
+                args.Append(element.Date + ' ');
+            }
+            args.Append(chartData.Count().ToString() + ' ');
+            foreach (var element in chartData) {
+                args.Append(element.TotalMoneyEarned().ToString() + ' ');
+            }
             chartProcess.StartInfo.Arguments = args.ToString();
             chartProcess.StartInfo.FileName = @"..\..\PythonScripts\EarningsPlot.py";
             chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             try {
                 chartProcess.Start();
+                processExited = false;
             } catch (Exception) {
                 MessageBox.Show("Error: Cannot find a file EarningsPlot.py");
                 return;
             }
             chartProcess.WaitForExit();
+            chartProcess?.Dispose();
+            processExited = true;
         }
 
-        public SoldItem CreateSoldItem() {
-            SoldItem item = null;
+        public Item CreateSoldItem() {
+            Item item = null;
 
             string itemName = ItemsView.SelectedItem as string;
             if (itemName == null) return null;
@@ -112,13 +123,13 @@ namespace RunescapeOrganiser {
             Decimal.TryParse(PriceTextBox.Text, out decimal price);
             UInt64.TryParse(AmountTextBox.Text, out ulong amount);
 
-            item = new SoldItem(itemName, amount, price);
+            item = new Item(itemName, amount, price);
 
             return item;
         }
 
         public void AddSoldItem() {
-            SoldItem item = CreateSoldItem();
+            Item item = CreateSoldItem();
             if (item == null) {
                 MessageBox.Show("Error! Can't add a new item. Check if the values provided are correct.", "AddError", MessageBoxButton.OK);
                 return;
@@ -126,6 +137,15 @@ namespace RunescapeOrganiser {
             DailyEarnings parent = AddDaily();
             parent.Add(item);
             UpdateEarningsView();
+        }
+
+        public void KillAndClearChartProcess() {
+            try {
+                mainWindow = null;
+                chartProcess?.Kill();
+                chartProcess?.Dispose();
+                chartProcess = null;
+            } catch (Exception) { }
         }
 
         private void EarningsView_Selected(object sender, RoutedEventArgs e) {
@@ -141,7 +161,6 @@ namespace RunescapeOrganiser {
         }
 
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e) {
-            if (chartThread != null && chartThread.IsAlive) return;
             Thread t = new Thread(() => DrawChart());
             t.Start();
         }
@@ -165,7 +184,7 @@ namespace RunescapeOrganiser {
             e.Handled = !StringUtils.IsNumeric(e.Text);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e) {
+        private void AddSoldItemEvent(object sender, RoutedEventArgs e) {
             AddSoldItem();
             UpdateEarningsView();
         }

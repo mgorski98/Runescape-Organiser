@@ -15,12 +15,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Utils;
 
+//TODO: add validation if the monster has a slayer contract available (e.g. Abyssal demons - yes, Dark beasts - no)
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for TaskAddWindow.xaml
     /// </summary>
     public partial class TaskAddWindow : Window {
-        //TODO: create conditional bindings to use different values is task is done entirely on a boss
         private string[] monsterNames;
         private string[] bossMonsterNames;
         private MainWindow mainWindow;
@@ -153,12 +153,12 @@ namespace RunescapeOrganiser {
             e.Handled = !StringUtils.IsNumeric(e.Text);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e) {
+        private void AddTaskEvent(object sender, RoutedEventArgs e) {
             MessageBoxResult result = MessageBox.Show("Do you have any additional notes?", "Notes", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 try {
-                    var t = Application.Current.Windows.OfType<Notes>().ToArray()[0];
-                } catch (IndexOutOfRangeException) {
+                    var t = Application.Current.Windows.OfType<Notes>().ElementAt(0);
+                } catch (ArgumentOutOfRangeException) {
                     Notes n = new Notes();
                     n.Show();
                 }
@@ -167,7 +167,7 @@ namespace RunescapeOrganiser {
             }
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e) {
+        private void BossCheckBox_Checked(object sender, RoutedEventArgs e) {
             ShowBossControls();
             FindMatchingBosses();
         }

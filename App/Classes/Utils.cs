@@ -25,7 +25,7 @@ namespace Utils {
             string result = null;
             var words = s.Split(' ');
             for (int i = 0; i < words.Length; ++i) {
-                words[i] = words[i][0].ToString().ToUpper() + new string(words[i].Skip(1).ToArray());
+                words[i] = words[i][0].ToString().ToUpper() + words[i].Substring(1);
             }
             result = String.Join(" ", words);
             return result;

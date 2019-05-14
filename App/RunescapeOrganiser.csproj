@@ -60,11 +60,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BossLogsPage.xaml.cs">
+      <DependentUpon>BossLogsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Classes\DailyEarnings.cs" />
+    <Compile Include="Classes\DailyExpenses.cs" />
     <Compile Include="Classes\DailySlayerTaskList.cs" />
     <Compile Include="Classes\Definitions.cs" />
     <Compile Include="EarningsPage.xaml.cs">
       <DependentUpon>EarningsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExpensesPage.xaml.cs">
+      <DependentUpon>ExpensesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Notes.xaml.cs">
       <DependentUpon>Notes.xaml</DependentUpon>
@@ -73,12 +80,20 @@
       <DependentUpon>SlayerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\SlayerTask.cs" />
-    <Compile Include="Classes\SoldItem.cs" />
+    <Compile Include="Classes\Item.cs" />
     <Compile Include="TaskAddWindow.xaml.cs">
       <DependentUpon>TaskAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\Utils.cs" />
+    <Page Include="BossLogsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EarningsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExpensesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,6 +152,11 @@
   <ItemGroup>
     <Resource Include="Images\summoning_7ZT_icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\SaveIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ChartIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

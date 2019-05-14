@@ -24,8 +24,8 @@ namespace RunescapeOrganiser {
     public partial class SlayerPage : Page {
 
         private MainWindow mainWindow = null;
+        public bool processExited = true;
         private Process chartProcess = null;
-        private Thread chartThread = null;
 
         public SlayerPage() {
             InitializeComponent();
@@ -79,6 +79,7 @@ namespace RunescapeOrganiser {
         }
 
         public void DrawChart() {
+            if (processExited == false) return;
             var chartData = SlayerTasksView.Items.Cast<DailySlayerTaskList>();
             if (chartData.Count() <= 1) {
                 MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
@@ -99,11 +100,14 @@ namespace RunescapeOrganiser {
             chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             try {
                 chartProcess.Start();
+                processExited = false;
             } catch (Exception) {
                 MessageBox.Show("Error: Cannot find a file SlayerXPPlot.py");
                 return;
             }
             chartProcess.WaitForExit();
+            chartProcess?.Dispose();
+            processExited = true;
         }
 
         public void KillAndClearChartProcess() {
@@ -111,7 +115,6 @@ namespace RunescapeOrganiser {
                 mainWindow = null;
                 chartProcess?.Kill();
                 chartProcess?.Dispose();
-                chartThread = null;
                 chartProcess = null;
             } catch (Exception) { }
         }
@@ -133,12 +136,10 @@ namespace RunescapeOrganiser {
         }
 
         private void DrawChartEvent(object sender, RoutedEventArgs e) {
-            if (chartThread != null && chartThread.IsAlive) return;
-            chartThread = new Thread(() => DrawChart());
-            chartThread.Start();
+            
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e) {//save progress
+        private void SaveProgressEvent(object sender, RoutedEventArgs e) {//save progress
             mainWindow.SaveProgress();
         }
     }

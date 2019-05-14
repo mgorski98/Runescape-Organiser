@@ -17,7 +17,7 @@
                         <TextBlock Text="{Binding Date}"></TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type local:SoldItem}">
+                <DataTemplate DataType="{x:Type local:Item}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="- "></TextBlock>
                         <TextBlock Text="{Binding Amount}"></TextBlock>
@@ -42,7 +42,7 @@
         <Button Click="Button_Click" Content="Add To DataBase" HorizontalAlignment="Left" Margin="535,90,0,0" VerticalAlignment="Top" Width="75" Height="23" FontSize="9"/>
         <GroupBox Header="Properties" HorizontalAlignment="Left" Height="163" Margin="342,283,0,0" VerticalAlignment="Top" Width="268">
             <Grid HorizontalAlignment="Center" Height="130" Margin="0,0,0,0" VerticalAlignment="Center" Width="260">
-                <Button Click="Button_Click_1" Content="Add" HorizontalAlignment="Left" Margin="175,34,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+                <Button Click="AddSoldItemEvent" Content="Add" HorizontalAlignment="Left" Margin="175,34,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
                 <TextBox PreviewTextInput="AmountTextBox_PreviewTextInput"  Name="AmountTextBox" HorizontalAlignment="Left" Height="23" Margin="10,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                 <Label Content="Amount" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                 <TextBox PreviewTextInput="PriceTextBox_PreviewTextInput" Name="PriceTextBox" HorizontalAlignment="Left" Height="23" Margin="10,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -56,7 +56,6 @@
                 </ScrollViewer>
             </Grid>
         </GroupBox>
-        <Button Click="Button_Click_2" Content="Save all progress" HorizontalAlignment="Left" Margin="842,10,0,0" VerticalAlignment="Top" Width="98" Height="30"/>
 
 
     </Grid>
