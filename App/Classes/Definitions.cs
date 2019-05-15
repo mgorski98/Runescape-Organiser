@@ -105,6 +105,11 @@ namespace RunescapeOrganiser {
         SlayerContract
     }
 
+    public enum ItemType : byte {
+        Sold,
+        Bought
+    }
+
     public struct Slayer { 
         public static Dictionary<SlayerMonsters, KeyValuePair<string, decimal>> SlayerLookUpTable
             = new Dictionary<SlayerMonsters, KeyValuePair<string, decimal>>();
@@ -311,5 +316,10 @@ namespace RunescapeOrganiser {
 
     public interface IJsonSerializable {
         void SaveToJson();
+    }
+
+    public class GoldBalance {
+        public virtual DailyGoldBalance GetOwner() => null;
+        public virtual void SetOwner(DailyGoldBalance gb) {}
     }
 }

@@ -17,7 +17,7 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        private DailyEarnings owner;
+        private GoldBalance owner;
 
         public Item(string name, ulong amount, decimal Price) {
             this.ItemName = name;
@@ -57,8 +57,8 @@ namespace RunescapeOrganiser {
             return sb.ToString();
         }
 
-        public void SetOwner(DailyEarnings newOwner) => this.owner = newOwner;
-        public DailyEarnings GetOwner() => this.owner;
+        public void SetOwner(GoldBalance newOwner) => this.owner = newOwner;
+        public GoldBalance GetOwner() => this.owner;
         public override bool Equals(object obj) {
             if (obj is Item item) {
                 return this.ItemName.Equals(item.ItemName);

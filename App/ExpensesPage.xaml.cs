@@ -17,6 +17,7 @@ namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for Expenses.xaml
     /// </summary>
+    [Obsolete]
     public partial class ExpensesPage : Page {
         public ExpensesPage() {
             InitializeComponent();

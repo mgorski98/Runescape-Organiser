@@ -21,6 +21,7 @@ namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for EarningsPage.xaml
     /// </summary>
+    [Obsolete]
     public partial class EarningsPage : Page {
 
         public MainWindow mainWindow = null;
@@ -38,49 +39,49 @@ namespace RunescapeOrganiser {
             this.ItemsView.Items.Refresh();
         }
 
-        public DailyEarnings AddDaily() {
-            string date = DateUtils.GetTodaysDate();
-            foreach (var entry in EarningsView.Items) {
-                if (entry is DailyEarnings e) {
-                    if (e.Date == date) {
-                        return e;
-                    }
-                }
-            }
-            var newDaily = new DailyEarnings();
-            List<DailyEarnings> tempList = new List<DailyEarnings>(mainWindow.@DailyEarnings) { newDaily };
-            tempList = tempList.OrderByDescending(s => s?.Date).ToList();
-            mainWindow.DailyEarnings = new System.Collections.ObjectModel.ObservableCollection<DailyEarnings>(tempList);
-            EarningsView.ItemsSource = mainWindow.DailyEarnings;
-            UpdateEarningsView();
-            return newDaily;
-        }
+        //public DailyEarnings AddDaily() {
+        //    string date = DateUtils.GetTodaysDate();
+        //    foreach (var entry in EarningsView.Items) {
+        //        if (entry is DailyEarnings e) {
+        //            if (e.Date == date) {
+        //                return e;
+        //            }
+        //        }
+        //    }
+        //    var newDaily = new DailyEarnings();
+        //    List<DailyEarnings> tempList = new List<DailyEarnings>(mainWindow.@DailyEarnings) { newDaily };
+        //    tempList = tempList.OrderByDescending(s => s?.Date).ToList();
+        //    mainWindow.DailyEarnings = new System.Collections.ObjectModel.ObservableCollection<DailyEarnings>(tempList);
+        //    EarningsView.ItemsSource = mainWindow.DailyEarnings;
+        //    UpdateEarningsView();
+        //    return newDaily;
+        //}
 
         public void UpdateEarningsView() {
             EarningsView.UpdateLayout();
             EarningsView.Items.Refresh();
         }
 
-        public void DeleteItem() {
-            object o = EarningsView.SelectedItem;
-            if (o == null) return;
-            if (o is DailyEarnings e) {
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the daily?", "Delete Daily", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes) {
-                    mainWindow.DailyEarnings.Remove(e);
-                    UpdateEarningsView();
-                    ItemInfo.Text = "";
-                }
-            }
-            if (o is Item item) {
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Delete", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes) {
-                    item.GetOwner().Remove(item);
-                    UpdateEarningsView();
-                    ItemInfo.Text = "";
-                }
-            }
-        }
+        //public void DeleteItem() {
+        //    object o = EarningsView.SelectedItem;
+        //    if (o == null) return;
+        //    if (o is DailyEarnings e) {
+        //        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the daily?", "Delete Daily", MessageBoxButton.YesNo);
+        //        if (result == MessageBoxResult.Yes) {
+        //            mainWindow.DailyEarnings.Remove(e);
+        //            UpdateEarningsView();
+        //            ItemInfo.Text = "";
+        //        }
+        //    }
+        //    if (o is Item item) {
+        //        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Delete", MessageBoxButton.YesNo);
+        //        if (result == MessageBoxResult.Yes) {
+        //           // item.GetOwner().Remove(item);
+        //            UpdateEarningsView();
+        //            ItemInfo.Text = "";
+        //        }
+        //    }
+        //}
 
         public void DrawChart() {
             if (processExited == false) return;
@@ -128,16 +129,16 @@ namespace RunescapeOrganiser {
             return item;
         }
 
-        public void AddSoldItem() {
-            Item item = CreateSoldItem();
-            if (item == null) {
-                MessageBox.Show("Error! Can't add a new item. Check if the values provided are correct.", "AddError", MessageBoxButton.OK);
-                return;
-            }
-            DailyEarnings parent = AddDaily();
-            parent.Add(item);
-            UpdateEarningsView();
-        }
+        //public void AddSoldItem() {
+        //    Item item = CreateSoldItem();
+        //    if (item == null) {
+        //        MessageBox.Show("Error! Can't add a new item. Check if the values provided are correct.", "AddError", MessageBoxButton.OK);
+        //        return;
+        //    }
+        //    DailyEarnings parent = AddDaily();
+        //    parent.Add(item);
+        //    UpdateEarningsView();
+        //}
 
         public void KillAndClearChartProcess() {
             try {
@@ -153,11 +154,11 @@ namespace RunescapeOrganiser {
         }
 
         private void AddDailyButton_Click(object sender, RoutedEventArgs e) {
-            AddDaily();
+            //AddDaily();
         }
 
         private void DeleteItemButton_Click(object sender, RoutedEventArgs e) {
-            DeleteItem();
+           // DeleteItem();
         }
 
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e) {
@@ -185,7 +186,7 @@ namespace RunescapeOrganiser {
         }
 
         private void AddSoldItemEvent(object sender, RoutedEventArgs e) {
-            AddSoldItem();
+           // AddSoldItem();
             UpdateEarningsView();
         }
 

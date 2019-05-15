@@ -67,11 +67,15 @@
     <Compile Include="Classes\DailyExpenses.cs" />
     <Compile Include="Classes\DailySlayerTaskList.cs" />
     <Compile Include="Classes\Definitions.cs" />
+    <Compile Include="Classes\DailyGoldBalance.cs" />
     <Compile Include="EarningsPage.xaml.cs">
       <DependentUpon>EarningsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ExpensesPage.xaml.cs">
       <DependentUpon>ExpensesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GoldBalancePage.xaml.cs">
+      <DependentUpon>GoldBalancePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Notes.xaml.cs">
       <DependentUpon>Notes.xaml</DependentUpon>
@@ -94,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ExpensesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GoldBalancePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

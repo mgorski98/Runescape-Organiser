@@ -9,10 +9,14 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
-//TODO: Add loading expenses from Json
-//TODO: Fill Expenses page with controls
-//TODO: populate expenses page controls with content
-//TODO: set up a hierarchical structure with daily expenses class
+//TODO: Add controls to differentiate chosen item type (is it bought (expense) or sold (earning))
+//TODO: Add ObservableCollection<DailyMoneyBalance> to MainWindow Class
+//TODO: Add loading daily balance from json
+//TODO: Set up owners in Daily Earnings and Daily Expenses
+//TODO: create a DailyMoneyBalance class to store Daily Earnings and Daily Expenses
+//TODO: set up a treeview suited for Daily money balance (money balance -> earnings and expenses -> items)
+//TODO: delete earnings page and expenses page after the combined work
+//TODO: modify python script responsible for drawing earnings chart to include expenses on the same plot (also change the way the arguments are passed)
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,27 +27,18 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        public ObservableCollection<DailyEarnings> @DailyEarnings {
+        public ObservableCollection<DailyGoldBalance> DailyGoldBalances {
             get;set;
         }
 
-        public ObservableCollection<DailyExpenses> @DailyExpenses {
-            get;set;
-        }
+        private static object taskThreadLock = new object();
+        private static object balanceThreadLock = new object();
 
-        private static object threadLock = new object();
-        private static object threadLock2 = new object();
-        private static object threadLock3 = new object();
-
-        private bool FinishedLoading {
+        private bool FinishedLoadingTasks {
             get; set;
         }
 
-        private bool FinishedLoading2 {
-            get;set;
-        }
-
-        private bool FinishedLoading3 {
+        private bool FinishedLoadingBalances {
             get;set;
         }
 
@@ -52,98 +47,45 @@ namespace RunescapeOrganiser {
         }
 
         private SlayerPage slayerPage;
-        private EarningsPage earningsPage;
         private BossLogsPage bossLogsPage;
-        private ExpensesPage expensesPage;
+        private GoldBalancePage goldBalancePage;
+
+        private List<DailyGoldBalance> balances = new List<DailyGoldBalance>();
 
         public MainWindow() {
+            //init collections
+            this.DailyGoldBalances = new ObservableCollection<DailyGoldBalance>();
             this.FinishedSaving = true;
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>();
-            this.@DailyEarnings = new ObservableCollection<DailyEarnings>();
-            this.@DailyExpenses = new ObservableCollection<DailyExpenses>();
+            //init windows
             this.InitializeComponent();
             this.ApplicationInit();
+            //init databases
             Slayer.InitSlayerTables();
             Earnings.InitItemNames();
-            this.earningsPage.InitItemsView();
+            //load collection items
             this.LoadTasks();
-            this.LoadEarnings();
-          //  this.LoadExpenses();
-            foreach (var element in @DailyEarnings) {
-                element.SortDesc();
-            }
-            foreach (var item in DailyEarnings) {
-                item.UpdateOwners();
-            }
-            foreach (var item in DailySlayerTasks) {
-                item.UpdateOwners();
-            }
+            this.LoadBalances();
+            //init the views
+            this.goldBalancePage.PopulateViews();
             GC.Collect();
         }
 
         private void LoadTasks() {
             string[] files = Directory.GetFiles(@"../../Tasks");
-            List<Thread> threadList = new List<Thread>();
+            List<Thread> threads = new List<Thread>();
             foreach (var file in files) {
                 Thread t = new Thread(() => LoadTaskFromJson(file));
-                threadList.Add(t);
+                threads.Add(t);
                 t.Start();
             }
-            while (!this.FinishedLoading) {
-                this.FinishedLoading = threadList.All(t => !t.IsAlive);
+            while (!this.FinishedLoadingTasks) {
+                this.FinishedLoadingTasks = threads.All(t => !t.IsAlive);
             }
             List<DailySlayerTaskList> tempList = new List<DailySlayerTaskList>(this.DailySlayerTasks);
             tempList = tempList.OrderByDescending(task => task.TaskDate).ToList();
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>(tempList);
             this.Dispatcher.Invoke(() => slayerPage.SlayerTasksView.ItemsSource = this.DailySlayerTasks);
-        }
-
-        private void LoadEarnings() {
-            string[] files = Directory.GetFiles(@"../../Earnings");
-            List<Thread> threads = new List<Thread>();
-            foreach (var file in files) {
-                Thread t = new Thread(() => LoadDailyEarningsFromJson(file));
-                threads.Add(t);
-                t.Start();
-            }
-            while (!this.FinishedLoading2) {
-                this.FinishedLoading2 = threads.All(t => !t.IsAlive);
-            }
-            List<DailyEarnings> tempList = new List<DailyEarnings>(this.@DailyEarnings);
-            tempList = tempList.OrderByDescending(earning => earning?.Date).ToList();
-            this.@DailyEarnings = new ObservableCollection<DailyEarnings>(tempList);
-            this.Dispatcher.Invoke(() => earningsPage.EarningsView.ItemsSource = this.@DailyEarnings);
-        }
-
-        private void LoadExpenses() {
-            string[] files = Directory.GetFiles(@"../../Expenses");
-            List<Thread> threads = new List<Thread>();
-            foreach (var file in files) {
-                Thread t = new Thread(() => LoadDailyExpensesFromJson(file));
-                threads.Add(t);
-                t.Start();
-            }
-            while (!this.FinishedLoading3) {
-                this.FinishedLoading3 = threads.All(t => !t.IsAlive);
-            }
-            List<DailyExpenses> tempList = new List<DailyExpenses>(this.@DailyExpenses);
-            tempList = tempList.OrderByDescending(expense => expense?.Date).ToList();
-            this.@DailyExpenses = new ObservableCollection<DailyExpenses>(tempList);
-            //TODO: Invoke update of expenses treeview when it is set up
-            //this.Dispatcher.Invoke(() => );
-        }
-
-        private void LoadDailyEarningsFromJson(string path) {
-            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
-            DailyEarnings er = null;
-
-            using (var reader = new StreamReader(path)) {
-                er = JsonConvert.DeserializeObject<DailyEarnings>(reader.ReadToEnd());
-            }
-
-            lock (threadLock2) {
-                @DailyEarnings.Add(er);
-            }
         }
 
         private void LoadTaskFromJson(string path) {
@@ -155,60 +97,68 @@ namespace RunescapeOrganiser {
                 l = JsonConvert.DeserializeObject<DailySlayerTaskList>(reader.ReadToEnd());
             }
 
-            lock (threadLock) {
+            lock (taskThreadLock) {
                 DailySlayerTasks.Add(l);
             }
         }
 
-        private void LoadDailyExpensesFromJson(string path) {
-            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
-
-            DailyExpenses ex = null;
-
-            using (var reader = new StreamReader(path)) {
-                ex = JsonConvert.DeserializeObject<DailyExpenses>(reader.ReadToEnd());
+        private void LoadBalances() {
+            string[] files = Directory.GetFiles(@"../../MoneyBalances");
+            List<Thread> threads = new List<Thread>();
+            foreach (var file in files) {
+                Thread t = new Thread(() => LoadBalanceFromJson(file));
+                threads.Add(t);
+                t.Start();
             }
 
-            lock (threadLock3) {
-                @DailyExpenses.Add(ex);
+            while (!this.FinishedLoadingBalances) {
+                this.FinishedLoadingBalances = threads.All(t => !t.IsAlive);
+            }
+            List<DailyGoldBalance> tempList = new List<DailyGoldBalance>(this.DailyGoldBalances);
+            tempList = tempList.OrderByDescending(balance => balance.Date).ToList();
+            this.DailyGoldBalances = new ObservableCollection<DailyGoldBalance>(tempList);
+            this.Dispatcher.Invoke(() => goldBalancePage.GoldBalanceView.ItemsSource = this.DailyGoldBalances);
+        }
+
+        private void LoadBalanceFromJson(string path) {
+            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+            DailyGoldBalance gb = null;
+
+            using (var reader = new StreamReader(path)) {
+                gb = JsonConvert.DeserializeObject<DailyGoldBalance>(reader.ReadToEnd());
+            }
+            lock (balanceThreadLock) {
+                DailyGoldBalances.Add(gb);
             }
         }
 
         private void ApplicationInit() {
-            TabItem item1, item2, item3, item4;
+            TabItem item1, item2, item3;
             item1 = new TabItem();
             item2 = new TabItem();
             item3 = new TabItem();
-            item4 = new TabItem();
-            Frame f1, f2, f3, f4;
+            Frame f1, f2, f3;
             f1 = new Frame();
             f2 = new Frame();
             f3 = new Frame();
-            f4 = new Frame();
             f1.Background = Brushes.LightGray;
             f2.Background = Brushes.LightGray;
             f3.Background = Brushes.LightGray;
-            f4.Background = Brushes.LightGray;
             item1.Header = "Slayer tasks";
-            item2.Header = "Earnings";
-            item4.Header = "Boss logs";
-            item3.Header = "Expenses";
+            item2.Header = "Gold balances";
+            item3.Header = "Boss logs";
             slayerPage = new SlayerPage();
             f1.Content = slayerPage;
-            earningsPage = new EarningsPage();
-            f2.Content = earningsPage;
             bossLogsPage = new BossLogsPage();
-            f4.Content = bossLogsPage;
-            expensesPage = new ExpensesPage();
-            f3.Content = expensesPage;
+            f3.Content = bossLogsPage;
+            goldBalancePage = new GoldBalancePage();
+            f2.Content = goldBalancePage;
             item1.Content = f1;
             item2.Content = f2;
             item3.Content = f3;
-            item4.Content = f4;
             Tabs.Items.Add(item1);
             Tabs.Items.Add(item2);
             Tabs.Items.Add(item3);
-            Tabs.Items.Add(item4);
         }
 
         public void ShowAddTaskWindow() {
@@ -223,18 +173,15 @@ namespace RunescapeOrganiser {
         }
 
         private void SaveAllProgress() {
-            List<IJsonSerializable> toSave = new List<IJsonSerializable>();
-            toSave.AddRange(this.DailyEarnings);
-            toSave.AddRange(this.DailySlayerTasks);
             List<Thread> threads = new List<Thread>();
             Thread items = new Thread(() => Earnings.DumpToDisk());
             threads.Add(items);
             items.Start();
-            toSave.ForEach(elem => {
-                Thread t = new Thread(() => elem.SaveToJson());
+            foreach (var balance in DailyGoldBalances) {
+                Thread t = new Thread(() => balance.SaveToJson());
                 threads.Add(t);
                 t.Start();
-            });
+            }
 
             while (!this.FinishedSaving) {
                 this.FinishedSaving = threads.All(t => !t.IsAlive);
@@ -248,7 +195,7 @@ namespace RunescapeOrganiser {
         //event handlers
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
             slayerPage.KillAndClearChartProcess();
-            earningsPage.KillAndClearChartProcess();
+            goldBalancePage.KillAndClearChartProcess();
             Earnings.DumpToDisk();
         }
 
@@ -265,7 +212,7 @@ namespace RunescapeOrganiser {
                     if (ti.Content is Frame f) {
                         if (f.Content is SlayerPage p1) {
                             (new Thread(() => p1.DrawChart())).Start();
-                        } else if (f.Content is EarningsPage p2) {
+                        } else if (f.Content is GoldBalancePage p2) {
                             (new Thread(() => p2.DrawChart())).Start();
                         }
                     }

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Utils;
 
 namespace RunescapeOrganiser {
-    public class DailyEarnings : IJsonSerializable {
+    public class DailyEarnings : GoldBalance {
         public string Date {
             get;set;
         }
@@ -18,16 +18,21 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
+        private DailyGoldBalance owner;
+
         public DailyEarnings() {
             this.SoldItems = new ObservableCollection<Item>();
             this.Date = DateUtils.GetTodaysDate();
         }
 
-        ~DailyEarnings() {
-            this.SaveToJson();
-            this.Date = null;
-            this.SoldItems = null;
-        }
+        //~DailyEarnings() {
+        //    this.SaveToJson();
+        //    this.Date = null;
+        //    this.SoldItems = null;
+        //}
+
+        public override void SetOwner(DailyGoldBalance gb) => this.owner = gb;
+        public override DailyGoldBalance GetOwner() => this.owner;
 
         public void Add(Item item) {
             if (item == null) return;

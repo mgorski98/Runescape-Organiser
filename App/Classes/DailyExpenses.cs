@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Utils;
 
 namespace RunescapeOrganiser {
-    public class DailyExpenses : IJsonSerializable {
+    public class DailyExpenses : GoldBalance {
         public string Date {
             get;set;
         }
@@ -18,9 +18,45 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
+        private DailyGoldBalance owner;
+
+        public override void SetOwner(DailyGoldBalance owner) => this.owner = owner;
+        public override DailyGoldBalance GetOwner() => this.owner;
+
         public DailyExpenses() {
             this.BoughtItems = new ObservableCollection<Item>();
             this.Date = DateUtils.GetTodaysDate();
+        }
+
+        public void Add(Item item) {
+            if (item == null) return;
+            Item i = Find(item);
+            if (i != null) {
+                i.Add(item);
+                return;
+            }
+            this.BoughtItems.Add(item);
+            item.SetOwner(this);
+            this.SortDesc();
+        }
+
+        public void SortDesc() {
+            List<Item> items = new List<Item>(this.BoughtItems);
+            items.Sort((i1, i2) => i1.ItemName.CompareTo(i2.ItemName));
+            this.BoughtItems = new ObservableCollection<Item>(items);
+        }
+
+        public Item Find(Item item) {
+            foreach (var _item in this.BoughtItems) {
+                if (_item.ItemName == item.ItemName) {
+                    return _item;
+                }
+            }
+            return null;
+        }
+
+        public decimal TotalMoneySpent() {
+            return this.BoughtItems.Sum(item => item.Price);
         }
 
         public void SaveToJson() {
@@ -30,6 +66,45 @@ namespace RunescapeOrganiser {
                     writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
                 }
             } 
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Overview of expenses from ");
+            sb.Append(this.Date);
+            sb.Append(":\n");
+            if (this.BoughtItems.Count > 0) {
+                sb.Append("Total money spent: ");
+                sb.Append(this.TotalMoneySpent().ToString("0.##"));
+                sb.Append("gp\n");
+                sb.Append("Items bought: \n");
+                foreach (var item in BoughtItems) {
+                    sb.Append(item.ToInfoString());
+                }
+            } else {
+                sb.Append("None (yet)");
+            }
+            return sb.ToString();
+        }
+
+
+        public override bool Equals(object obj) {
+            if (obj is DailyExpenses ex) {
+                return ex?.Date == this.Date;
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+
+        public static bool operator==(DailyExpenses ex1, DailyExpenses ex2) {
+            return ex1?.Equals(ex2) ?? false;
+        }
+
+        public static bool operator!=(DailyExpenses ex1, DailyExpenses ex2) {
+            return !ex1?.Equals(ex2) ?? false;
         }
     }
 }
