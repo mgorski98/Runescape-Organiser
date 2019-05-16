@@ -25,12 +25,6 @@ namespace RunescapeOrganiser {
             this.Date = DateUtils.GetTodaysDate();
         }
 
-        //~DailyEarnings() {
-        //    this.SaveToJson();
-        //    this.Date = null;
-        //    this.SoldItems = null;
-        //}
-
         public override void SetOwner(DailyGoldBalance gb) => this.owner = gb;
         public override DailyGoldBalance GetOwner() => this.owner;
 

@@ -40,6 +40,11 @@ namespace RunescapeOrganiser {
             this.SortDesc();
         }
 
+        public void Remove(Item item) {
+            if (item == null) return;
+            this.BoughtItems.Remove(item);
+        }
+
         public void SortDesc() {
             List<Item> items = new List<Item>(this.BoughtItems);
             items.Sort((i1, i2) => i1.ItemName.CompareTo(i2.ItemName));
@@ -78,7 +83,7 @@ namespace RunescapeOrganiser {
                 sb.Append(this.TotalMoneySpent().ToString("0.##"));
                 sb.Append("gp\n");
                 sb.Append("Items bought: \n");
-                foreach (var item in BoughtItems) {
+                foreach (var item in this.BoughtItems) {
                     sb.Append(item.ToInfoString());
                 }
             } else {

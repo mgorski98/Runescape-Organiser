@@ -296,9 +296,7 @@ namespace RunescapeOrganiser {
 
         public static HashSet<string> ItemNames = new HashSet<string>();
 
-     //   [System.Obsolete]
         public static void DumpToDisk() {
-            ItemNames.Add("High Level Alchemy");
             using (var fs = new FileStream(ItemNamesFilePath, FileMode.Create)) {
                 using (var writer = new StreamWriter(fs)) {
                     writer.Write(JsonConvert.SerializeObject(ItemNames, Formatting.Indented));
@@ -318,7 +316,7 @@ namespace RunescapeOrganiser {
         void SaveToJson();
     }
 
-    public class GoldBalance {
+    public class GoldBalance {//wrapper for DailyEarnings and DailyExpenses
         public virtual DailyGoldBalance GetOwner() => null;
         public virtual void SetOwner(DailyGoldBalance gb) {}
     }

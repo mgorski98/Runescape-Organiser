@@ -8,15 +8,8 @@ using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
-//TODO: Add controls to differentiate chosen item type (is it bought (expense) or sold (earning))
-//TODO: Add ObservableCollection<DailyMoneyBalance> to MainWindow Class
-//TODO: Add loading daily balance from json
-//TODO: Set up owners in Daily Earnings and Daily Expenses
-//TODO: create a DailyMoneyBalance class to store Daily Earnings and Daily Expenses
-//TODO: set up a treeview suited for Daily money balance (money balance -> earnings and expenses -> items)
-//TODO: delete earnings page and expenses page after the combined work
-//TODO: modify python script responsible for drawing earnings chart to include expenses on the same plot (also change the way the arguments are passed)
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -34,6 +27,8 @@ namespace RunescapeOrganiser {
         private static object taskThreadLock = new object();
         private static object balanceThreadLock = new object();
 
+        private const string copiedFilesFilePath = @"../../Copies";
+
         private bool FinishedLoadingTasks {
             get; set;
         }
@@ -49,8 +44,6 @@ namespace RunescapeOrganiser {
         private SlayerPage slayerPage;
         private BossLogsPage bossLogsPage;
         private GoldBalancePage goldBalancePage;
-
-        private List<DailyGoldBalance> balances = new List<DailyGoldBalance>();
 
         public MainWindow() {
             //init collections
@@ -68,7 +61,41 @@ namespace RunescapeOrganiser {
             this.LoadBalances();
             //init the views
             this.goldBalancePage.PopulateViews();
+            this.UpdateOwners();
+            //ALWAYS BACK UP YOUR WORK KIDDOS
+            this.MakeFilesBackup();
             GC.Collect();
+        }
+
+        private void MakeFilesBackup() {
+            string jsonFilesPath = copiedFilesFilePath + "/" + @"JsonFiles_Copies";
+            string tasksPath = copiedFilesFilePath + "/" + @"Tasks_Copies";
+            string moneyBalancesPath = copiedFilesFilePath + "/" + @"MoneyBalances_Copies";
+            string[] jsonFiles, tasksFiles, moneyBalanceFiles;
+            jsonFiles = Directory.GetFiles(@"../../JsonFiles");
+            tasksFiles = Directory.GetFiles(@"../../Tasks");
+            moneyBalanceFiles = Directory.GetFiles(@"../../MoneyBalances");
+
+            foreach (var jsonFile in jsonFiles) {
+                string filename = jsonFilesPath + "/" + Path.GetFileNameWithoutExtension(jsonFile) + " Copy" + Path.GetExtension(jsonFile);
+                File.Copy(jsonFile, filename, true);
+            }
+
+            foreach (var taskFile in tasksFiles) {
+                string filename = tasksPath + "/" + Path.GetFileNameWithoutExtension(taskFile) + " Copy" + Path.GetExtension(taskFile);
+                File.Copy(taskFile, filename, true);
+            }
+
+            foreach (var moneyBalanceFile in moneyBalanceFiles) {
+                string filename = moneyBalancesPath + "/" + Path.GetFileNameWithoutExtension(moneyBalanceFile) + " Copy" + Path.GetExtension(moneyBalanceFile);
+                File.Copy(moneyBalanceFile, filename, true);
+            }
+        }
+
+        private void UpdateOwners() {
+            foreach (var balance in this.DailyGoldBalances) {
+                balance.UpdateOwners();
+            }
         }
 
         private void LoadTasks() {
@@ -98,7 +125,7 @@ namespace RunescapeOrganiser {
             }
 
             lock (taskThreadLock) {
-                DailySlayerTasks.Add(l);
+                this.DailySlayerTasks.Add(l);
             }
         }
 
@@ -110,7 +137,6 @@ namespace RunescapeOrganiser {
                 threads.Add(t);
                 t.Start();
             }
-
             while (!this.FinishedLoadingBalances) {
                 this.FinishedLoadingBalances = threads.All(t => !t.IsAlive);
             }
@@ -122,13 +148,15 @@ namespace RunescapeOrganiser {
 
         private void LoadBalanceFromJson(string path) {
             if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+
             DailyGoldBalance gb = null;
 
             using (var reader = new StreamReader(path)) {
                 gb = JsonConvert.DeserializeObject<DailyGoldBalance>(reader.ReadToEnd());
             }
+
             lock (balanceThreadLock) {
-                DailyGoldBalances.Add(gb);
+                this.DailyGoldBalances.Add(gb);
             }
         }
 
@@ -147,18 +175,18 @@ namespace RunescapeOrganiser {
             item1.Header = "Slayer tasks";
             item2.Header = "Gold balances";
             item3.Header = "Boss logs";
-            slayerPage = new SlayerPage();
+            this.slayerPage = new SlayerPage();
             f1.Content = slayerPage;
-            bossLogsPage = new BossLogsPage();
+            this.bossLogsPage = new BossLogsPage();
             f3.Content = bossLogsPage;
-            goldBalancePage = new GoldBalancePage();
+            this.goldBalancePage = new GoldBalancePage();
             f2.Content = goldBalancePage;
             item1.Content = f1;
             item2.Content = f2;
             item3.Content = f3;
-            Tabs.Items.Add(item1);
-            Tabs.Items.Add(item2);
-            Tabs.Items.Add(item3);
+            this.Tabs.Items.Add(item1);
+            this.Tabs.Items.Add(item2);
+            this.Tabs.Items.Add(item3);
         }
 
         public void ShowAddTaskWindow() {
@@ -173,6 +201,7 @@ namespace RunescapeOrganiser {
         }
 
         private void SaveAllProgress() {
+            this.FinishedSaving = false;
             List<Thread> threads = new List<Thread>();
             Thread items = new Thread(() => Earnings.DumpToDisk());
             threads.Add(items);
@@ -194,21 +223,23 @@ namespace RunescapeOrganiser {
 
         //event handlers
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
-            slayerPage.KillAndClearChartProcess();
-            goldBalancePage.KillAndClearChartProcess();
-            Earnings.DumpToDisk();
+            this.slayerPage.KillAndClearChartProcess();
+            this.goldBalancePage.KillAndClearChartProcess();
+            MessageBoxResult savingFlag = MessageBox.Show("Do you want to save unsaved changes?", "Save changes", MessageBoxButton.YesNo);
+            if (savingFlag == MessageBoxResult.Yes) {
+                this.SaveAllProgress();
+            }
         }
 
         public void SaveProgress() {
             if (!this.FinishedSaving) return;
-            Thread t = new Thread(() => this.SaveAllProgress());
-            t.Start();
+            (new Thread(() => this.SaveAllProgress())).Start();
         }
 
         public void DrawChart() {
             this.Dispatcher.Invoke(() => {
                 if (this.Tabs.SelectedItem == null) return;
-                if (Tabs.SelectedItem is TabItem ti) {
+                if (this.Tabs.SelectedItem is TabItem ti) {
                     if (ti.Content is Frame f) {
                         if (f.Content is SlayerPage p1) {
                             (new Thread(() => p1.DrawChart())).Start();
@@ -220,12 +251,14 @@ namespace RunescapeOrganiser {
             });
         }
 
-        private void SaveAllProgressEvent(object sender, RoutedEventArgs e) {
-            this.SaveProgress();
-        }
+        private void SaveAllProgressEvent(object sender, RoutedEventArgs e) => this.SaveProgress();
 
-        private void DrawChartMainWindowEvent(object sender, RoutedEventArgs e) {
-            (new Thread(() => this.DrawChart())).Start();
+        private void DrawChartMainWindowEvent(object sender, RoutedEventArgs e) => (new Thread(() => this.DrawChart())).Start();
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S)) {
+                this.SaveProgress();
+            }
         }
     }
 }

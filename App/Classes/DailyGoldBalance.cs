@@ -20,17 +20,24 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        private DailyEarnings earnings;
-        private DailyExpenses expenses;
+        public DailyEarnings earnings;
+        public DailyExpenses expenses;
 
         public DailyGoldBalance() {
-            earnings = new DailyEarnings();
-            expenses = new DailyExpenses();
-            this.EarningsAndExpenses = new ObservableCollection<GoldBalance>() { earnings, expenses };
+            this.earnings = new DailyEarnings();
+            this.expenses = new DailyExpenses();
+            this.EarningsAndExpenses = new ObservableCollection<GoldBalance>() { this.earnings, this.expenses };
             foreach (var item in this.EarningsAndExpenses) {
                 item.SetOwner(this);
             }
             this.Date = DateUtils.GetTodaysDate();
+        }
+
+        public void UpdateOwners() {
+            this.earnings.SetOwner(this);
+            this.expenses.SetOwner(this);
+            foreach (var item in this.earnings.SoldItems) item.SetOwner(this.earnings);
+            foreach (var item in this.expenses.BoughtItems) item.SetOwner(this.expenses);
         }
 
         public void SaveToJson() {

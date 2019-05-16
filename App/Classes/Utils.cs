@@ -11,25 +11,9 @@ namespace Utils {
     }
 
     public static class StringUtils {
-        public static bool IsNumeric(string s) {
-            if (String.IsNullOrWhiteSpace(s)) return false;
-            try {
-                int x = Int32.Parse(s);
-            } catch (FormatException) {
-                return false;
-            }
-            return true;
-        }
-
-        public static string Capitalize(this string s) {
-            string result = null;
-            var words = s.Split(' ');
-            for (int i = 0; i < words.Length; ++i) {
-                words[i] = words[i][0].ToString().ToUpper() + words[i].Substring(1);
-            }
-            result = String.Join(" ", words);
-            return result;
-        }
+        public static bool IsNumeric(string s) => Int64.TryParse(s, out long r);
+        public static string CapitalizeSentenceWords(this string s) => String.Join(" ", s.Split(' ').Select(word => word.Capitalize()));
+        public static string Capitalize(this string s) => s[0].ToString().ToUpper() + s.Substring(1);
     }
 
     public static class DictUtils {

@@ -172,7 +172,7 @@ namespace RunescapeOrganiser {
 
         private void Button_Click(object sender, RoutedEventArgs e) {
             if (String.IsNullOrWhiteSpace(FindItemsTextBox.Text)) return;
-            Earnings.ItemNames.Add(FindItemsTextBox.Text.Trim().Capitalize());
+           // Earnings.ItemNames.Add(FindItemsTextBox.Text.Trim().Capitalize());
             this.ItemsView.UpdateLayout();
             this.FindItemsTextBox.Text = "";
         }

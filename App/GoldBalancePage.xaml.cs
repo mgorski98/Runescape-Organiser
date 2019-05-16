@@ -27,8 +27,8 @@ namespace RunescapeOrganiser {
         private Process chartProcess = null;
 
         public GoldBalancePage() {
-            InitializeComponent();
-            mainWindow = Application.Current.Windows.OfType<MainWindow>().ElementAt(0);
+            this.InitializeComponent();
+            this.mainWindow = Application.Current.Windows.OfType<MainWindow>().ElementAt(0);
             #region TREEVIEW_TEST
 #if DEBUG
             DailyGoldBalance balance = new DailyGoldBalance();
@@ -46,18 +46,17 @@ namespace RunescapeOrganiser {
 
         public Item CreateItem() {
 
-            string s = ItemsView.SelectedItem as string;
+            string s = this.ItemsView.SelectedItem as string;
             if (s == null) return null;
-            Decimal.TryParse(PriceTextBox.Text, out decimal price);
-            UInt64.TryParse(AmountTextBox.Text, out ulong amount);
+            Decimal.TryParse(this.PriceTextBox.Text, out decimal price);
+            UInt64.TryParse(this.AmountTextBox.Text, out ulong amount);
 
             return new Item(s, amount, price);
         }
 
         public DailyGoldBalance AddDaily() {
-
             string date = DateUtils.GetTodaysDate();
-            foreach (var entry in GoldBalanceView.Items) {
+            foreach (var entry in this.GoldBalanceView.Items) {
                 if (entry is DailyGoldBalance e) {
                     if (e.Date == date) {
                         return e;
@@ -65,26 +64,26 @@ namespace RunescapeOrganiser {
                 }
             }
             var newDaily = new DailyGoldBalance();
-            List<DailyGoldBalance> tempList = new List<DailyGoldBalance>(mainWindow.DailyGoldBalances) { newDaily };
+            List<DailyGoldBalance> tempList = new List<DailyGoldBalance>(this.mainWindow.DailyGoldBalances) { newDaily };
             tempList = tempList.OrderByDescending(s => s.Date).ToList();
-            mainWindow.DailyGoldBalances = new System.Collections.ObjectModel.ObservableCollection<DailyGoldBalance>(tempList);
-            this.GoldBalanceView.ItemsSource = mainWindow.DailyGoldBalances;
-            UpdateTreeView();
+            this.mainWindow.DailyGoldBalances = new System.Collections.ObjectModel.ObservableCollection<DailyGoldBalance>(tempList);
+            this.GoldBalanceView.ItemsSource = this.mainWindow.DailyGoldBalances;
+            this.UpdateTreeView();
             return newDaily;
         }
 
         public void AddItem() {
-            Item item = CreateItem();
+            Item item = this.CreateItem();
             if (item == null) {
                 MessageBox.Show("Error! Can't add a new item. Check if the values provided are correct.", "AddError", MessageBoxButton.OK);
                 return;
             }
 
-            ItemType soldOrBought = (ItemType)Enum.Parse(typeof(ItemType), ItemTypeComboBox.SelectedItem as string);
+            ItemType soldOrBought = (ItemType)Enum.Parse(typeof(ItemType), this.ItemTypeComboBox.SelectedItem as string);
 
-            object o = GoldBalanceView.SelectedItem;
+            object o = this.GoldBalanceView.SelectedItem;
             if (o == null) {
-                var daily = AddDaily();
+                var daily = this.AddDaily();
                 switch (soldOrBought) {
                     case ItemType.Bought:
                         (daily.EarningsAndExpenses[1] as DailyExpenses)?.Add(item);
@@ -127,18 +126,39 @@ namespace RunescapeOrganiser {
                     }
                 }
             }
-            UpdateTreeView();
+            this.UpdateTreeView();
         }
 
         public void DeleteItem() {
-
+            object o = this.GoldBalanceView.SelectedItem;
+            if (o == null) return;
+            if (o is DailyGoldBalance gb) {
+                MessageBoxResult res = MessageBox.Show("Do you really want to delete this item?", "Delete", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.Yes) {
+                    this.mainWindow.DailyGoldBalances.Remove(gb);
+                }
+            } else if (o is Item i) {
+                var owner = i.GetOwner();
+                if (owner == null) return;
+                if (owner is DailyExpenses ex) {
+                    MessageBoxResult res = MessageBox.Show("Do you really want to delete this item?", "Delete", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes) {
+                        ex.Remove(i);
+                    }
+                } else if (owner is DailyEarnings er) {
+                    MessageBoxResult res = MessageBox.Show("Do you really want to delete this item?", "Delete", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes) {
+                        er.Remove(i);
+                    }
+                }
+            }
         }
 
         public void PopulateViews() {
             this.ItemTypeComboBox.ItemsSource = Enum.GetNames(typeof(ItemType));
             this.ItemTypeComboBox.SelectedItem = this.ItemTypeComboBox.Items.GetItemAt(0);
             this.ItemsView.ItemsSource = Earnings.ItemNames;
-            this.GoldBalanceView.ItemsSource = mainWindow.DailyGoldBalances;
+            this.GoldBalanceView.ItemsSource = this.mainWindow.DailyGoldBalances;
             this.UpdateTreeView();
         }
 
@@ -149,13 +169,13 @@ namespace RunescapeOrganiser {
 
         public void DrawChart() {
             if (this.processExited == false) return;
-            var chartData = GoldBalanceView.Items.Cast<DailyGoldBalance>();
+            var chartData = this.GoldBalanceView.Items.Cast<DailyGoldBalance>();
             if (chartData.Count() <= 0) {
                 MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
                 return;
             }
+            this.chartProcess = new Process();
             StringBuilder args = new StringBuilder();
-            chartProcess = new Process();
 
             args.Append(chartData.Count().ToString() + ' ');
             foreach (var elem in chartData) {
@@ -163,50 +183,55 @@ namespace RunescapeOrganiser {
                 args.Append(elem.GetEarnings().ToString() + ' ');
                 args.Append(elem.GetExpenses().ToString() + ' ');
             }
-            chartProcess.StartInfo.FileName = @"..\..\PythonScripts\BalancePlot.py";
-            chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            chartProcess.StartInfo.Arguments = args.ToString();
+
+            this.chartProcess.StartInfo.FileName = @"..\..\PythonScripts\BalancePlot.py";
+            this.chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            this.chartProcess.StartInfo.Arguments = args.ToString();
 
             try {
-                chartProcess.Start();
-                processExited = false;
+                this.chartProcess.Start();
+                this.processExited = false;
             } catch (Exception) {
                 MessageBox.Show("Error: Cannot find a file BalancePlot.py");
                 return;
             }
 
-            chartProcess.WaitForExit();
-            chartProcess?.Dispose();
-            processExited = true;
+            this.chartProcess.WaitForExit();
+            this.chartProcess?.Dispose();
+            this.processExited = true;
         }
 
         public void KillAndClearChartProcess() {
             try {
-                mainWindow = null;
-                chartProcess?.Kill();
-                chartProcess?.Dispose();
-                chartProcess = null;
+                this.mainWindow = null;
+                this.chartProcess?.Kill();
+                this.chartProcess?.Dispose();
+                this.chartProcess = null;
             } catch (Exception) { }
         }
 
-        private void AmountTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-            e.Handled = !StringUtils.IsNumeric(e.Text);
-        }
+        private void NumericValidation(object sender, TextCompositionEventArgs e) => e.Handled = !StringUtils.IsNumeric(e.Text);
 
-        private void PriceTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-            e.Handled = !StringUtils.IsNumeric(e.Text);
-        }
+        private void AddDailyEvent(object sender, RoutedEventArgs e) => this.AddDaily();
 
-        private void AddDailyButton_Click(object sender, RoutedEventArgs e) {
-            AddDaily();
-        }
+        private void AddItemEvent(object sender, RoutedEventArgs e) => this.AddItem();
 
-        private void Button_Click(object sender, RoutedEventArgs e) {//add item
-            AddItem();
-        }
+        private void DeleteItemButton_Click(object sender, RoutedEventArgs e) => this.DeleteItem();
 
         private void GoldBalanceView_Selected(object sender, RoutedEventArgs e) {
-            InfoBox.Text = GoldBalanceView.SelectedItem?.ToString();
+            this.InfoBox.Text = this.GoldBalanceView.SelectedItem?.ToString();
         }
+
+        private void AddToItemDatabaseEvent(object sender, RoutedEventArgs e) {
+            if (String.IsNullOrWhiteSpace(this.FindItemsTextBox.Text)) return;
+            Earnings.ItemNames.Add(this.FindItemsTextBox.Text.Trim().CapitalizeSentenceWords());
+            this.ItemsView.UpdateLayout();
+            this.FindItemsTextBox.Text = "";
+        }
+
+        private void FindItemsOnTextChangedEvent(object sender, TextChangedEventArgs e) {
+            this.ItemsView.ItemsSource = Earnings.ItemNames.Where(s => s.ToLower().Contains(this.FindItemsTextBox.Text.ToLower().Trim())).OrderBy(s => s);
+        }
+
     }
 }
