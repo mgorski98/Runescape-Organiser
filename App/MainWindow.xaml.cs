@@ -220,22 +220,6 @@ namespace RunescapeOrganiser {
             MessageBox.Show("Progress saved successfully!", "Saving", MessageBoxButton.OK);
         }
 
-
-        //event handlers
-        private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
-            this.slayerPage.KillAndClearChartProcess();
-            this.goldBalancePage.KillAndClearChartProcess();
-            MessageBoxResult savingFlag = MessageBox.Show("Do you want to save unsaved changes?", "Save changes", MessageBoxButton.YesNo);
-            if (savingFlag == MessageBoxResult.Yes) {
-                this.SaveAllProgress();
-            }
-        }
-
-        public void SaveProgress() {
-            if (!this.FinishedSaving) return;
-            (new Thread(() => this.SaveAllProgress())).Start();
-        }
-
         public void DrawChart() {
             this.Dispatcher.Invoke(() => {
                 if (this.Tabs.SelectedItem == null) return;
@@ -249,6 +233,26 @@ namespace RunescapeOrganiser {
                     }
                 }
             });
+        }
+
+        //event handlers
+        private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
+            this.slayerPage.KillAndClearChartProcess();
+            this.goldBalancePage.KillAndClearChartProcess();
+            MessageBoxResult savingFlag = MessageBox.Show("Do you want to save unsaved changes?", "Save changes", MessageBoxButton.YesNo);
+            if (savingFlag == MessageBoxResult.Yes) {
+                this.SaveAllProgress();
+            }
+            foreach (var window in Application.Current.Windows) {
+                try {
+                    ((Window)window).Close();
+                } catch (Exception) {}
+            }
+        }
+
+        public void SaveProgress() {
+            if (!this.FinishedSaving) return;
+            (new Thread(() => this.SaveAllProgress())).Start();
         }
 
         private void SaveAllProgressEvent(object sender, RoutedEventArgs e) => this.SaveProgress();

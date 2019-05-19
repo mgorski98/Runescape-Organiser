@@ -80,7 +80,7 @@ namespace RunescapeOrganiser {
             sb.Append(":\n");
             if (this.BoughtItems.Count > 0) {
                 sb.Append("Total money spent: ");
-                sb.Append(this.TotalMoneySpent().ToString("0.##"));
+                sb.Append(this.TotalMoneySpent().ToString("#,##0"));
                 sb.Append("gp\n");
                 sb.Append("Items bought: \n");
                 foreach (var item in this.BoughtItems) {
@@ -101,7 +101,13 @@ namespace RunescapeOrganiser {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            int result = this.Date.Length.GetHashCode();
+
+            unchecked {
+                result *= 420 * (420 ^ (this.BoughtItems.GetHashCode()));
+            }
+
+            return result;
         }
 
         public static bool operator==(DailyExpenses ex1, DailyExpenses ex2) {

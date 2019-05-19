@@ -79,17 +79,17 @@ namespace RunescapeOrganiser {
                 if (earnings.SoldItems.Count > 0) {
                     sb.Append("- ");
                     sb.Append("Earnings: ");
-                    sb.Append(earnings.TotalMoneyEarned().ToString("0.##"));
+                    sb.Append(earnings.TotalMoneyEarned().ToString("#,##0"));
                     sb.Append("gp\n");
                 }
                 if (expenses.BoughtItems.Count > 0) {
                     sb.Append("- ");
                     sb.Append("Expenses: ");
-                    sb.Append(expenses.TotalMoneySpent().ToString("0.##"));
+                    sb.Append(expenses.TotalMoneySpent().ToString("#,##0"));
                     sb.Append("gp\n");
                 }
                 sb.Append("Total balance: ");
-                sb.Append(this.TotalGoldBalance().ToString("0.##"));
+                sb.Append(this.TotalGoldBalance().ToString("#,##0"));
                 sb.Append("gp\n");
             }
             return sb.ToString();

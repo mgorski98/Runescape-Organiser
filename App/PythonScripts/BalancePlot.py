@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.patches as mpatches
 import matplotlib
 import sys
 import datetime
@@ -21,10 +22,14 @@ matplotlib.rcParams['toolbar'] = 'None'
 
 x = dates
 y1, y2 = earnings, expenses
+#set pretty dates on x axis
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator())
 plt.gcf().set_size_inches(8,6)
-plt.plot(x, y1,lw=3, marker='o', markersize = 3, color = 'green')
+earnings_patch = mpatches.Patch(color='green', label="Earnings")
+expenses_patch = mpatches.Patch(color='red', label='Expenses')
+plt.legend(handles = [earnings_patch, expenses_patch])
+plt.plot(x, y1,lw=3, marker='o', markersize = 1, color = 'green')
 plt.plot(x, y2,lw=3, marker='o', markersize = 1, color = 'red')
 plt.title('Daily gold balance in RuneScape')
 plt.xlabel('Date')

@@ -14,6 +14,29 @@ namespace Utils {
         public static bool IsNumeric(string s) => Int64.TryParse(s, out long r);
         public static string CapitalizeSentenceWords(this string s) => String.Join(" ", s.Split(' ').Select(word => word.Capitalize()));
         public static string Capitalize(this string s) => s[0].ToString().ToUpper() + s.Substring(1);
+        public static int LevenshteinDistance(string first, string second) {
+            if (first.Length == 0) return second.Length;
+            if (second.Length == 0) return first.Length;
+
+            int m, n;
+            m = first.Length + 1;
+            n = second.Length + 1;
+            int[,] matrix = new int[m, n];
+            for (int i = 0; i < m; ++i) matrix[i, 0] = i;
+            for (int j = 1; j < n; ++j) matrix[0, j] = j;
+            int cost = 0;
+            for (int i = 1; i < m; ++i) {
+                for (int j  = 1; j < n; ++j) {
+                    cost = (first[i - 1] == second[j - 1] ? 0 : 1);
+                    matrix[i, j] = Math.Min(
+                        Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1), 
+                        matrix[i - 1, j - 1] + cost
+                    );
+                }
+            }
+
+            return matrix[m - 1, n - 1];
+        }
     }
 
     public static class DictUtils {

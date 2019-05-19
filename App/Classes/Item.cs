@@ -21,6 +21,9 @@ namespace RunescapeOrganiser {
 
         public Item(string name, ulong amount, decimal Price) {
             this.ItemName = name;
+            if (!String.IsNullOrWhiteSpace(this.ItemName)) {
+                this.ItemName = this.ItemName.Trim();
+            }
             this.Amount = amount;
             this.Price = Price;
         }
@@ -40,7 +43,7 @@ namespace RunescapeOrganiser {
             sb.Append(this.Amount.ToString());
             sb.Append("\n");
             sb.Append("Total price: ");
-            sb.Append(this.Price.ToString("0.##"));
+            sb.Append(this.Price.ToString("#,##0"));
             sb.Append("gp");
             return sb.ToString();
         }
@@ -52,7 +55,7 @@ namespace RunescapeOrganiser {
             sb.Append("x ");
             sb.Append(this.ItemName);
             sb.Append(" -> ");
-            sb.Append(this.Price.ToString("0.##"));
+            sb.Append(this.Price.ToString("#,##0"));
             sb.Append("gp\n");
             return sb.ToString();
         }
@@ -65,8 +68,22 @@ namespace RunescapeOrganiser {
             }
             return false;
         }
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode() {
+            int result = this.ItemName.Length.GetHashCode();
+
+            unchecked {
+                result *= 310 * (310 ^ this.Amount.GetHashCode());
+                result *= 305 * (305 ^ this.Price.GetHashCode());
+            }
+            
+            return result;
+        }
         public static bool operator==(Item si1, Item si2) => si1?.Equals(si2) ?? false;
         public static bool operator !=(Item si1, Item si2) => !si1?.Equals(si2) ?? false;
+        //public static void operator+(Item i1, Item i2) {
+        //    if (i1 == null || i2 == null) return;
+        //    if (!i1.Equals(i2)) return;
+        //    return new Item(i1.ItemName, i1.Amount + i2.Amount, i1.Price + i2.Price);
+        //}
     }
 }

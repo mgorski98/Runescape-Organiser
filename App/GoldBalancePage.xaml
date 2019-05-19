@@ -63,8 +63,10 @@
         </GroupBox>
         <GroupBox Header="Balance/Item info" HorizontalAlignment="Left" Height="262" Margin="632,226,0,0" VerticalAlignment="Top" Width="308">
             <Grid HorizontalAlignment="Center" Height="260" Margin="0,0,0,0" VerticalAlignment="Center" Width="305" Background="White">
-                <ScrollViewer HorizontalAlignment="Center" Height="260" Margin="0,0,0,0" VerticalAlignment="Center" Width="305">
-                    <TextBlock Name="InfoBox" FontFamily="Microsoft Sans Serif" FontSize="12" TextWrapping="Wrap" Height="234" Width="271"/>
+                <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalAlignment="Center" Height="260" Margin="0,0,0,0" VerticalAlignment="Center" Width="305">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBox Margin="7,0,0,0" IsReadOnly="True" Name="InfoBox" FontFamily="Microsoft Sans Serif" FontSize="12" TextWrapping="WrapWithOverflow" Height="240" Width="295"/>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
         </GroupBox>

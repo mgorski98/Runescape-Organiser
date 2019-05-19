@@ -61,7 +61,7 @@ namespace RunescapeOrganiser {
 
         public Item Find(Item item) {
             foreach (var _item in this.SoldItems) {
-                if (_item.ItemName == item.ItemName) {
+                if (_item.Equals(item)) {
                     return _item;
                 }
             }
@@ -69,7 +69,7 @@ namespace RunescapeOrganiser {
         }
 
         public decimal TotalMoneyEarned() {
-            return SoldItems.Sum(si => si.Price);
+            return SoldItems?.Sum(si => si?.Price) ?? 0;
         }
 
         public void SaveToJson() {
@@ -89,7 +89,7 @@ namespace RunescapeOrganiser {
             sb.Append(":\n");
             if (this.SoldItems.Count > 0) {
                 sb.Append("Total money earned: ");
-                sb.Append(this.TotalMoneyEarned().ToString("0.##"));
+                sb.Append(this.TotalMoneyEarned().ToString("#,##0"));
                 sb.Append("gp\n");
                 sb.Append("Items sold: \n");
                 foreach (var item in SoldItems) {
@@ -109,7 +109,11 @@ namespace RunescapeOrganiser {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            int result = this.Date.Length.GetHashCode();
+            unchecked {
+                result *= 366 * (366 ^ this.SoldItems.GetHashCode());
+            }
+            return result;
         }
 
         public static bool operator==(DailyEarnings d1, DailyEarnings d2) {

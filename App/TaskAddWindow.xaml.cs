@@ -42,6 +42,7 @@ namespace RunescapeOrganiser {
                 }
             }
             BossListView.Items.Refresh();
+            ContractCheckBox.Visibility = Visibility.Hidden;
         }
 
         private string[] GetMonsterNames() {
@@ -103,13 +104,13 @@ namespace RunescapeOrganiser {
         }
 
         private void FindMatchingBosses() {
-            if (MonsterListView.SelectedItem == null) return;
             string monsterName = MonsterListView.SelectedItem as string;
             SlayerMonsters monsterType = Slayer.SlayerLookUpTable.Where(entry => entry.Value.Key == monsterName).ToArray()[0].Key;
             var bossTypes = Slayer.BossMonsterGroups.Where(entry => entry.Value.Contains(monsterType)).Select(en => en.Key);
             string[] bossNames = bossTypes.Select(entry => Slayer.BossSlayerLookUpTable[entry].Key).ToArray();
             BossListView.ItemsSource = bossNames;
             BossListView.UpdateLayout();
+            BossListView.Items.Refresh();
         }
 
         public void SetNotes(string[] notes) {
@@ -123,6 +124,17 @@ namespace RunescapeOrganiser {
             slayerPage.SlayerTasksView.UpdateLayout();
             slayerPage.UpdateTaskInfoContents();
             this.Close();
+        }
+
+        private void ValidateContract() {
+            string monsterName = MonsterListView.SelectedItem as string;
+            SlayerMonsters monsterType = Slayer.SlayerLookUpTable.Where(entry => entry.Value.Key == monsterName).ElementAt(0).Key;
+            if (Slayer.SlayerMonstersWithContractAvailableLookUpTable.Contains(monsterType)) {
+                ContractCheckBox.Visibility = Visibility.Visible;
+            } else {
+                ContractCheckBox.Visibility = Visibility.Hidden;
+                ContractCheckBox.IsChecked = false;
+            }
         }
 
 
@@ -146,7 +158,9 @@ namespace RunescapeOrganiser {
         }
 
         private void ListViewItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            if (MonsterListView.SelectedItem == null) return;
             FindMatchingBosses();
+            ValidateContract();
         }
 
         private void TextBoxNumberValidation(object sender, TextCompositionEventArgs e) {

@@ -107,13 +107,13 @@ namespace RunescapeOrganiser {
                         MessageBox.Show("You are trying to add Sold item to the Expenses!");
                         return;
                     }
-                    ex.BoughtItems.Add(item);
+                    ex.Add(item);
                 } else if (o is DailyEarnings er) {
                     if (soldOrBought == ItemType.Bought) {
                         MessageBox.Show("You are trying to add Bought item to the Earnings!");
                         return;
                     }
-                    er.SoldItems.Add(item);
+                    er.Add(item);
                 } else if (o is Item i) {
                     DailyGoldBalance _gb = i.GetOwner()?.GetOwner();
                     switch (soldOrBought) {
@@ -127,6 +127,8 @@ namespace RunescapeOrganiser {
                 }
             }
             this.UpdateTreeView();
+            this.AmountTextBox.Text = "";
+            this.PriceTextBox.Text = "";
         }
 
         public void DeleteItem() {
