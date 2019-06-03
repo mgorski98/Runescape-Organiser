@@ -10,6 +10,7 @@ using Utils;
 
 namespace RunescapeOrganiser {
     public class DailyEarnings : GoldBalance {
+
         public string Date {
             get;set;
         }
@@ -47,7 +48,9 @@ namespace RunescapeOrganiser {
         }
 
         public void UpdateOwners() {
-            foreach (var item in this.SoldItems) item.SetOwner(this);
+            foreach (var item in this.SoldItems) {
+                item.SetOwner(this);
+            }
         }
 
         public void Remove(Item item) {
@@ -55,22 +58,9 @@ namespace RunescapeOrganiser {
             this.SoldItems.Remove(item);
         }
 
-        public bool Contains(Item item) {
-            return this.SoldItems.Contains(item);
-        }
-
-        public Item Find(Item item) {
-            foreach (var _item in this.SoldItems) {
-                if (_item.Equals(item)) {
-                    return _item;
-                }
-            }
-            return null;
-        }
-
-        public decimal TotalMoneyEarned() {
-            return SoldItems?.Sum(si => si?.Price) ?? 0;
-        }
+        public bool Contains(Item item) => this.SoldItems.Contains(item);
+        public Item Find(Item item) => this.SoldItems.FirstOrDefault(i => i.Equals(item));
+        public decimal TotalMoneyEarned() => SoldItems?.Sum(si => si?.Price) ?? 0;
 
         public void SaveToJson() {
             string path = @"../../Earnings/" + "Earnings from " + this.Date.Replace("/", ".") + ".ern";
@@ -101,12 +91,7 @@ namespace RunescapeOrganiser {
             return sb.ToString();
         }
 
-        public override bool Equals(object obj) {
-            if (obj is DailyEarnings earnings) {
-                return earnings?.Date == this.Date;
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is DailyEarnings er ? er.Date == this.Date : false;
 
         public override int GetHashCode() {
             int result = this.Date.Length.GetHashCode();
@@ -116,12 +101,7 @@ namespace RunescapeOrganiser {
             return result;
         }
 
-        public static bool operator==(DailyEarnings d1, DailyEarnings d2) {
-            return d1.Equals(d2);
-        }
-
-        public static bool operator!=(DailyEarnings d1, DailyEarnings d2) {
-            return !d1.Equals(d2);
-        }
+        public static bool operator==(DailyEarnings d1, DailyEarnings d2) => d1.Equals(d2);
+        public static bool operator!=(DailyEarnings d1, DailyEarnings d2) => !d1.Equals(d2);
     }
 }

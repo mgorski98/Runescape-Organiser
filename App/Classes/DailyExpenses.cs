@@ -51,18 +51,9 @@ namespace RunescapeOrganiser {
             this.BoughtItems = new ObservableCollection<Item>(items);
         }
 
-        public Item Find(Item item) {
-            foreach (var _item in this.BoughtItems) {
-                if (_item.ItemName == item.ItemName) {
-                    return _item;
-                }
-            }
-            return null;
-        }
+        public Item Find(Item item) => this.BoughtItems.FirstOrDefault(i => i.Equals(item));
 
-        public decimal TotalMoneySpent() {
-            return this.BoughtItems.Sum(item => item.Price);
-        }
+        public decimal TotalMoneySpent() => this.BoughtItems.Sum(item => item.Price);
 
         public void SaveToJson() {
             string path = @"../../Expenses/" + "Expenses from " + this.Date.Replace('/', '.') + @".exp";
@@ -93,12 +84,7 @@ namespace RunescapeOrganiser {
         }
 
 
-        public override bool Equals(object obj) {
-            if (obj is DailyExpenses ex) {
-                return ex?.Date == this.Date;
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is DailyExpenses ex ? ex.Date == this.Date : false;
 
         public override int GetHashCode() {
             int result = this.Date.Length.GetHashCode();
@@ -110,12 +96,7 @@ namespace RunescapeOrganiser {
             return result;
         }
 
-        public static bool operator==(DailyExpenses ex1, DailyExpenses ex2) {
-            return ex1?.Equals(ex2) ?? false;
-        }
-
-        public static bool operator!=(DailyExpenses ex1, DailyExpenses ex2) {
-            return !ex1?.Equals(ex2) ?? false;
-        }
+        public static bool operator ==(DailyExpenses ex1, DailyExpenses ex2) => ex1?.Equals(ex2) ?? false;
+        public static bool operator!=(DailyExpenses ex1, DailyExpenses ex2) => !ex1?.Equals(ex2) ?? false;
     }
 }

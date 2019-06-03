@@ -43,7 +43,7 @@ namespace RunescapeOrganiser {
             var balanceData = dataBase.
                 Select(x => new DataPoint(
                     DateTimeAxis.ToDouble(DateTime.ParseExact(x.Date, dateFormat, CultureInfo.CurrentCulture)), 
-                    (double)(x.EarningsAndExpenses.OfType<DailyEarnings>().ElementAt(0).TotalMoneyEarned() - x.EarningsAndExpenses.OfType<DailyExpenses>().ElementAt(0).TotalMoneySpent())  
+                    (double)(x.TotalGoldBalance())  
                 )).
                 ToArray();    
 

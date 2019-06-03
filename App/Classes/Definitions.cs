@@ -164,7 +164,6 @@ namespace RunescapeOrganiser {
         private const string BossSlayerLookUpTableFilePath = @"../../JsonFiles/BossSlayerMonsters.json";
         private const string SlayerBonusesLookUpTableFilePath = @"../../JsonFiles/SlayerBonuses.json";
         private const string BossMonsterTypesLookUpTableFilePath = @"../../JsonFiles/BossMonsterTypes.json";
-        //private const string SlayerMonstersWithContractAvailableLookUpTableFilePath = @"../../JsonFiles/SlayerContracts.json";
 
         public static void InitSlayerTables() {
             using (var reader = new StreamReader(SlayerLookUpTableFilePath)) {

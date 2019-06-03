@@ -78,22 +78,9 @@ namespace RunescapeOrganiser {
             }
         }
 
-
-        public DailySkill Find(DailySkill s) {
-            if (s == null) return null;
-            foreach (var skill in DailySkills) {
-                if (skill.Equals(s)) return skill;
-            }
-            return null;
-        }
-
+        public DailySkill Find(DailySkill s) => this.DailySkills.FirstOrDefault(elem => elem.Equals(s));
         //overrides
-        public override bool Equals(object obj) {
-            if (obj is DailyTimeStatistic dts) {
-                return this.Date == dts.Date;
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is DailyTimeStatistic dts ? dts.Date == this.Date : false;
 
         public override int GetHashCode() {
             int result = 0;

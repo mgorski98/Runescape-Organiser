@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace RunescapeOrganiser {
     public class DailySkill {
+
         public Skill SkillType {
             get;set;
         }
+
         public string SkillName {
             get;set;
         }
+
         private DailyTimeStatistic owner;
+
         public DailySkill() {}
+
         public DailySkill(Skill s) {
             this.SkillType = s;
             this.SkillName = Enum.GetName(typeof(Skill), s);
         }
 
-        public override bool Equals(object obj) {
-            if (obj is DailySkill skill) {
-                return this.SkillName == skill.SkillName;
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is DailySkill skill ? this.SkillName == skill.SkillName;
 
         public override int GetHashCode() {
             int result = 0;
@@ -42,7 +42,6 @@ namespace RunescapeOrganiser {
             sb.Append("\n");
             sb.Append("Time spent: ");
             sb.Append(String.Format("{0:hh\\:mm\\:ss}", this.GetOwner()?.TimeSpentForSkills[this.SkillType]));
-            //sb.Append(this.GetOwner()?.TimeSpentForSkills[this.SkillType].ToString(@"d.hh:mm:ss"));
             return sb.ToString();
         }
 

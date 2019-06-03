@@ -49,13 +49,8 @@ namespace RunescapeOrganiser {
             }
         }
 
-        public decimal GetEarnings() {
-            return (this.EarningsAndExpenses[0] as DailyEarnings)?.TotalMoneyEarned() ?? 0;
-        }
-
-        public decimal GetExpenses() {
-            return (this.EarningsAndExpenses[1] as DailyExpenses)?.TotalMoneySpent() ?? 0;
-        }
+        public decimal GetEarnings() => (this.EarningsAndExpenses[0] as DailyEarnings)?.TotalMoneyEarned() ?? 0;
+        public decimal GetExpenses() => (this.EarningsAndExpenses[1] as DailyExpenses)?.TotalMoneySpent() ?? 0;
 
         public decimal TotalGoldBalance() {
             DailyExpenses expenses = this.EarningsAndExpenses[1] as DailyExpenses;

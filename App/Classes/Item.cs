@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RunescapeOrganiser {
     public class Item {
@@ -64,12 +61,8 @@ namespace RunescapeOrganiser {
 
         public void SetOwner(GoldBalance newOwner) => this.owner = newOwner;
         public GoldBalance GetOwner() => this.owner;
-        public override bool Equals(object obj) {
-            if (obj is Item item) {
-                return this.ItemName.Equals(item.ItemName);
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is Item i ? i.ItemName.Equals(this.ItemName) : false;
+
         public override int GetHashCode() {
             int result = this.ItemName.Length.GetHashCode();
 
@@ -80,6 +73,7 @@ namespace RunescapeOrganiser {
             
             return result;
         }
+
         public static bool operator==(Item si1, Item si2) => si1?.Equals(si2) ?? false;
         public static bool operator !=(Item si1, Item si2) => !si1?.Equals(si2) ?? false;
     }
