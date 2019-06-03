@@ -82,7 +82,7 @@ namespace RunescapeOrganiser {
                 sb.Append("Total money spent: ");
                 sb.Append(this.TotalMoneySpent().ToString("#,##0"));
                 sb.Append("gp\n");
-                sb.Append("Items bought: \n");
+                sb.Append("Expense sources: \n");
                 foreach (var item in this.BoughtItems) {
                     sb.Append(item.ToInfoString());
                 }

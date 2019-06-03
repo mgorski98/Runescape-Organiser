@@ -39,15 +39,8 @@
                 <Button Click="AddTaskWindowShowEvent" Content="Add Task" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Background="#FFDDDDDD"/>
                 <Button Click="AddDailyEvent" Content="Add Daily" HorizontalAlignment="Left" Margin="115,10,0,0" VerticalAlignment="Top" Width="75"/>
                 <Button Click="DeleteEvent" Content="Delete Item" HorizontalAlignment="Left" Margin="10,61,0,0" VerticalAlignment="Top" Width="75"/>
-                <Button Click="DrawChartEvent" Content="Show XP Graph" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="75" FontSize="10" Height="19"/>
+                <!--<Button Click="DrawChartEvent" Content="Show XP Graph" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="75" FontSize="10" Height="19"/>-->
             </Grid>
         </GroupBox>
-        <!--<Button HorizontalAlignment="Left" Margin="554,22,0,0" VerticalAlignment="Top" Width="48" Height="48">
-            <Button.Background>
-                <ImageBrush ImageSource="Images/SaveIcon.png" Stretch="Fill"></ImageBrush>
-            </Button.Background>
-        </Button>-->
-
-
     </Grid>
 </Page>

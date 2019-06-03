@@ -1,0 +1,54 @@
+﻿<Page x:Class="RunescapeOrganiser.InGameTimePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RunescapeOrganiser"
+      mc:Ignorable="d" 
+      d:DesignHeight="525" d:DesignWidth="950"
+      Title="InGameTimePage">
+
+    <Grid>
+        <TreeView TreeViewItem.Selected="TimeStatisticsView_Selected" x:Name="TimeStatisticsView" HorizontalAlignment="Left" Height="404" Margin="72,75,0,0" VerticalAlignment="Top" Width="240" BorderBrush="Black">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type local:DailyTimeStatistic}" ItemsSource="{Binding DailySkills}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Time statistic for "></TextBlock>
+                        <TextBlock Text="{Binding Date}"></TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type local:DailySkill}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="- "></TextBlock>
+                        <TextBlock Text="{Binding SkillName}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+        <Label Content="Daily time statistics" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top"/>
+        <GroupBox BorderBrush="Black" Header="Options" HorizontalAlignment="Left" Height="191" Margin="663,75,0,0" VerticalAlignment="Top" Width="251">
+            <Grid HorizontalAlignment="Center" Height="166" Margin="0,0,6.6,2" VerticalAlignment="Center" Width="231">
+                <ComboBox DropDownClosed="SkillTypesComboBox_DropDownClosed" x:Name="SkillTypesComboBox" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Width="211"/>
+                <Label Content="Skill" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <Button Click="AddDailyButton_Click" Name="AddDailyButton" Content="Add Daily" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75"/>
+                <Button Click="DeleteItemButton_Click" Name="DeleteItemButton" Content="Delete item" HorizontalAlignment="Left" Margin="146,70,0,0" VerticalAlignment="Top" Width="75"/>
+                <Button Click="SaveProgressButton_Click" Name="SaveProgressButton" Content="Save Time" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="75"/>
+            </Grid>
+        </GroupBox>
+        <Button Click="Button_Click" Content="Start" HorizontalAlignment="Left" Margin="389,136,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Click="StopButton_Click" Name="StopButton" Content="Stop" HorizontalAlignment="Left" Margin="501,136,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBlock Name="TimerBox" TextAlignment="Center" HorizontalAlignment="Left" Margin="389,107,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="24" Width="187" FontSize="16"/>
+        <Label Content="Timer" HorizontalAlignment="Left" Margin="389,75,0,0" VerticalAlignment="Top"/>
+        <GroupBox Header="Time info" HorizontalAlignment="Left" Height="262" Margin="335,217,0,0" VerticalAlignment="Top" Width="302">
+            <Grid HorizontalAlignment="Center" Height="260" Margin="0,0,0,0" VerticalAlignment="Center" Width="305" Background="White">
+                <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalAlignment="Center" Height="260" Margin="0,0,0,0" VerticalAlignment="Center" Width="305">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBox Margin="7,0,0,0" IsReadOnly="True" x:Name="InfoBox" FontFamily="Microsoft Sans Serif" FontSize="12" TextWrapping="WrapWithOverflow" Height="240" Width="294"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Page>

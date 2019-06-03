@@ -10,9 +10,11 @@ namespace RunescapeOrganiser {
         public ulong Amount {
             get;set;
         }
+
         public string ItemName {
             get;set;
         }
+
         public decimal Price {
             get;set;
         }
@@ -36,13 +38,13 @@ namespace RunescapeOrganiser {
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Item sold: ");
+            sb.Append("Source: ");
             sb.Append(this.ItemName);
             sb.Append("\n");
-            sb.Append("Quantity: ");
+            sb.Append("Quantity/Number of times/etc.: ");
             sb.Append(this.Amount.ToString());
             sb.Append("\n");
-            sb.Append("Total price: ");
+            sb.Append("Total money: ");
             sb.Append(this.Price.ToString("#,##0"));
             sb.Append("gp");
             return sb.ToString();
@@ -80,10 +82,5 @@ namespace RunescapeOrganiser {
         }
         public static bool operator==(Item si1, Item si2) => si1?.Equals(si2) ?? false;
         public static bool operator !=(Item si1, Item si2) => !si1?.Equals(si2) ?? false;
-        //public static void operator+(Item i1, Item i2) {
-        //    if (i1 == null || i2 == null) return;
-        //    if (!i1.Equals(i2)) return;
-        //    return new Item(i1.ItemName, i1.Amount + i2.Amount, i1.Price + i2.Price);
-        //}
     }
 }

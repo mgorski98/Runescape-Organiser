@@ -23,8 +23,6 @@ namespace RunescapeOrganiser {
     public partial class GoldBalancePage : Page {
 
         public MainWindow mainWindow;
-        public bool processExited = true;
-        private Process chartProcess = null;
 
         public GoldBalancePage() {
             this.InitializeComponent();
@@ -48,7 +46,7 @@ namespace RunescapeOrganiser {
 
             string s = this.ItemsView.SelectedItem as string;
             if (s == null) return null;
-            Decimal.TryParse(this.PriceTextBox.Text, out decimal price);
+            Decimal.TryParse(this.PriceTextBox.Text, out decimal price);    
             UInt64.TryParse(this.AmountTextBox.Text, out ulong amount);
 
             return new Item(s, amount, price);
@@ -107,13 +105,13 @@ namespace RunescapeOrganiser {
                         MessageBox.Show("You are trying to add Sold item to the Expenses!");
                         return;
                     }
-                    ex.Add(item);
+                    ex?.Add(item);
                 } else if (o is DailyEarnings er) {
                     if (soldOrBought == ItemType.Bought) {
                         MessageBox.Show("You are trying to add Bought item to the Earnings!");
                         return;
                     }
-                    er.Add(item);
+                    er?.Add(item);
                 } else if (o is Item i) {
                     DailyGoldBalance _gb = i.GetOwner()?.GetOwner();
                     switch (soldOrBought) {
@@ -170,46 +168,11 @@ namespace RunescapeOrganiser {
         }
 
         public void DrawChart() {
-            if (this.processExited == false) return;
-            var chartData = this.GoldBalanceView.Items.Cast<DailyGoldBalance>();
-            if (chartData.Count() <= 0) {
-                MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
-                return;
-            }
-            this.chartProcess = new Process();
-            StringBuilder args = new StringBuilder();
-
-            args.Append(chartData.Count().ToString() + ' ');
-            foreach (var elem in chartData) {
-                args.Append(elem.Date + ' ');
-                args.Append(elem.GetEarnings().ToString() + ' ');
-                args.Append(elem.GetExpenses().ToString() + ' ');
-            }
-
-            this.chartProcess.StartInfo.FileName = @"..\..\PythonScripts\BalancePlot.py";
-            this.chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            this.chartProcess.StartInfo.Arguments = args.ToString();
-
             try {
-                this.chartProcess.Start();
-                this.processExited = false;
-            } catch (Exception) {
-                MessageBox.Show("Error: Cannot find a file BalancePlot.py");
-                return;
+                var t = Application.Current.Windows.OfType<BalancePlot>().ElementAt(0);
+            } catch (ArgumentOutOfRangeException) {
+                (new BalancePlot()).Show();
             }
-
-            this.chartProcess.WaitForExit();
-            this.chartProcess?.Dispose();
-            this.processExited = true;
-        }
-
-        public void KillAndClearChartProcess() {
-            try {
-                this.mainWindow = null;
-                this.chartProcess?.Kill();
-                this.chartProcess?.Dispose();
-                this.chartProcess = null;
-            } catch (Exception) { }
         }
 
         private void NumericValidation(object sender, TextCompositionEventArgs e) => e.Handled = !StringUtils.IsNumeric(e.Text);
@@ -234,6 +197,7 @@ namespace RunescapeOrganiser {
         private void FindItemsOnTextChangedEvent(object sender, TextChangedEventArgs e) {
             this.ItemsView.ItemsSource = Earnings.ItemNames.Where(s => s.ToLower().Contains(this.FindItemsTextBox.Text.ToLower().Trim())).OrderBy(s => s);
         }
+
 
     }
 }

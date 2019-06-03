@@ -91,7 +91,7 @@ namespace RunescapeOrganiser {
                 sb.Append("Total money earned: ");
                 sb.Append(this.TotalMoneyEarned().ToString("#,##0"));
                 sb.Append("gp\n");
-                sb.Append("Items sold: \n");
+                sb.Append("Income sources: \n");
                 foreach (var item in SoldItems) {
                     sb.Append(item.ToInfoString());
                 }

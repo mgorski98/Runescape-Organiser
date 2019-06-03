@@ -110,6 +110,31 @@ namespace RunescapeOrganiser {
         Bought
     }
 
+    public enum Skill : byte {
+        Slayer,
+        Combat,
+        Prayer,
+        Crafting,
+        Mining,
+        Runecrafting,
+        Smithing,
+        Cooking, 
+        Fishing,
+        Firemaking,
+        Woodcutting,
+        Farming,
+        Dungeoneering,
+        Fletching,
+        Agility,
+        Herblore,
+        Thieving,
+        Construction,
+        Hunter,
+        Summoning,
+        Divination,
+        Invention
+    }
+
     public struct Slayer { 
         public static Dictionary<SlayerMonsters, KeyValuePair<string, decimal>> SlayerLookUpTable
             = new Dictionary<SlayerMonsters, KeyValuePair<string, decimal>>();
@@ -118,22 +143,22 @@ namespace RunescapeOrganiser {
         public static Dictionary<SlayerBonuses, decimal> SlayerBonusesLookUpTable = new Dictionary<SlayerBonuses, decimal>();
         public static Dictionary<BossSlayerMonsters, SlayerMonsters> BossMonsterTypesLookUpTable = new Dictionary<BossSlayerMonsters, SlayerMonsters>();
         public static List<SlayerMonsters> SlayerMonstersWithContractAvailableLookUpTable = new List<SlayerMonsters>() {
-        SlayerMonsters.Abyssal_Demon,
-        SlayerMonsters.Gargoyle,
-        SlayerMonsters.Nechryael
-    };
+            SlayerMonsters.Abyssal_Demon,
+            SlayerMonsters.Gargoyle,
+            SlayerMonsters.Nechryael
+        };
         public static Dictionary<BossSlayerMonsters, List<SlayerMonsters>> BossMonsterGroups = new Dictionary<BossSlayerMonsters, List<SlayerMonsters>>(){
-        {BossSlayerMonsters.Dagannoth_Kings, new List<SlayerMonsters>() { SlayerMonsters.Dagannoth } },
-        {BossSlayerMonsters.Exiled_Kalphite_Queen, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
-        {BossSlayerMonsters.Kalphite_King, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
-        {BossSlayerMonsters.Kalphite_Queen, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
-        {BossSlayerMonsters.KBD, new List<SlayerMonsters>() { SlayerMonsters.Black_Dragon } },
-        {BossSlayerMonsters.KreeArra, new List<SlayerMonsters>() { SlayerMonsters.Aviansie } },
-        {BossSlayerMonsters.Kril_Tsutsaroth, new List<SlayerMonsters>() { SlayerMonsters.Greater_Demon } },
-        {BossSlayerMonsters.Legiones, new List<SlayerMonsters>() { SlayerMonsters.Rorarius, SlayerMonsters.Gladius } },
-        {BossSlayerMonsters.QBD, new List<SlayerMonsters>() { SlayerMonsters.Black_Dragon } },
-        {BossSlayerMonsters.The_Magister, new List<SlayerMonsters>() { SlayerMonsters.Salawa_Akh, SlayerMonsters.Feline_Akh, SlayerMonsters.Gorilla_Akh, SlayerMonsters.Scarab_Akh, SlayerMonsters.Imperial_Akh, SlayerMonsters.Crocodile_Akh } }
-    };
+            {BossSlayerMonsters.Dagannoth_Kings, new List<SlayerMonsters>() { SlayerMonsters.Dagannoth } },
+            {BossSlayerMonsters.Exiled_Kalphite_Queen, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
+            {BossSlayerMonsters.Kalphite_King, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
+            {BossSlayerMonsters.Kalphite_Queen, new List<SlayerMonsters>() { SlayerMonsters.Kalphite } },
+            {BossSlayerMonsters.KBD, new List<SlayerMonsters>() { SlayerMonsters.Black_Dragon } },
+            {BossSlayerMonsters.KreeArra, new List<SlayerMonsters>() { SlayerMonsters.Aviansie } },
+            {BossSlayerMonsters.Kril_Tsutsaroth, new List<SlayerMonsters>() { SlayerMonsters.Greater_Demon } },
+            {BossSlayerMonsters.Legiones, new List<SlayerMonsters>() { SlayerMonsters.Rorarius, SlayerMonsters.Gladius } },
+            {BossSlayerMonsters.QBD, new List<SlayerMonsters>() { SlayerMonsters.Black_Dragon } },
+            {BossSlayerMonsters.The_Magister, new List<SlayerMonsters>() { SlayerMonsters.Salawa_Akh, SlayerMonsters.Feline_Akh, SlayerMonsters.Gorilla_Akh, SlayerMonsters.Scarab_Akh, SlayerMonsters.Imperial_Akh, SlayerMonsters.Crocodile_Akh } }
+        };
 
         private const string SlayerLookUpTableFilePath = @"../../JsonFiles/SlayerMonsters.json";
         private const string BossSlayerLookUpTableFilePath = @"../../JsonFiles/BossSlayerMonsters.json";
@@ -311,6 +336,8 @@ namespace RunescapeOrganiser {
             ItemNames = new HashSet<string>(ItemNames.OrderBy(s => s));
         }
     }
+
+    
 
     public interface IJsonSerializable {
         void SaveToJson();

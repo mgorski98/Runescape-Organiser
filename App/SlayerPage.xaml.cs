@@ -24,8 +24,6 @@ namespace RunescapeOrganiser {
     public partial class SlayerPage : Page {
 
         private MainWindow mainWindow = null;
-        public bool processExited = true;
-        private Process chartProcess = null;
 
         public SlayerPage() {
             InitializeComponent();
@@ -72,51 +70,16 @@ namespace RunescapeOrganiser {
             }
         }
 
-        
-
         public void UpdateTaskInfoContents() {
             TaskInfo.Text = SlayerTasksView.SelectedItem?.ToString();
         }
 
         public void DrawChart() {
-            if (processExited == false) return;
-            var chartData = SlayerTasksView.Items.Cast<DailySlayerTaskList>();
-            if (chartData.Count() <= 1) {
-                MessageBox.Show("Not enough data to draw a chart!", "ChartError", MessageBoxButton.OK);
-                return;
-            }
-            chartProcess = new Process();
-            StringBuilder args = new StringBuilder();
-            args.Append(chartData.Count().ToString() + ' ');
-            foreach (var element in chartData) {
-                args.Append(element.TaskDate + ' ');
-            }
-            args.Append(chartData.Count().ToString() + ' ');
-            foreach (var element in chartData) {
-                args.Append(element.TotalExperience().ToString() + ' ');
-            }
-            chartProcess.StartInfo.FileName = @"..\..\PythonScripts\SlayerXPPlot.py";
-            chartProcess.StartInfo.Arguments = args.ToString();
-            chartProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             try {
-                chartProcess.Start();
-                processExited = false;
-            } catch (Exception) {
-                MessageBox.Show("Error: Cannot find a file SlayerXPPlot.py");
-                return;
+                var t = Application.Current.Windows.OfType<SlayerPlot>().ElementAt(0);
+            } catch (ArgumentOutOfRangeException) {
+                (new SlayerPlot()).Show();
             }
-            chartProcess.WaitForExit();
-            chartProcess?.Dispose();
-            processExited = true;
-        }
-
-        public void KillAndClearChartProcess() {
-            try {
-                mainWindow = null;
-                chartProcess?.Kill();
-                chartProcess?.Dispose();
-                chartProcess = null;
-            } catch (Exception) { }
         }
 
         private void AddTaskWindowShowEvent(object sender, RoutedEventArgs e) {
@@ -133,10 +96,6 @@ namespace RunescapeOrganiser {
 
         private void SlayerTasksView_Selected(object sender, RoutedEventArgs e) {
             UpdateTaskInfoContents();
-        }
-
-        private void DrawChartEvent(object sender, RoutedEventArgs e) {
-            
         }
 
         private void SaveProgressEvent(object sender, RoutedEventArgs e) {//save progress

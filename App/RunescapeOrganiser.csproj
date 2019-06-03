@@ -40,6 +40,12 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
+      <HintPath>packages\OxyPlot.Core.1.0.0\lib\net45\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL">
+      <HintPath>packages\OxyPlot.Wpf.1.0.0\lib\net45\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -60,14 +66,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BossLogsPage.xaml.cs">
-      <DependentUpon>BossLogsPage.xaml</DependentUpon>
+    <Compile Include="BalancePlot.xaml.cs">
+      <DependentUpon>BalancePlot.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\BalancePlotViewModel.cs" />
     <Compile Include="Classes\DailyEarnings.cs" />
     <Compile Include="Classes\DailyExpenses.cs" />
+    <Compile Include="Classes\DailySkill.cs" />
     <Compile Include="Classes\DailySlayerTaskList.cs" />
+    <Compile Include="Classes\DailyTimeStatistic.cs" />
     <Compile Include="Classes\Definitions.cs" />
     <Compile Include="Classes\DailyGoldBalance.cs" />
+    <Compile Include="Classes\SlayerPlotViewModel.cs" />
+    <Compile Include="Classes\TotalTimeStatistics.cs" />
     <Compile Include="EarningsPage.xaml.cs">
       <DependentUpon>EarningsPage.xaml</DependentUpon>
     </Compile>
@@ -77,6 +88,9 @@
     <Compile Include="GoldBalancePage.xaml.cs">
       <DependentUpon>GoldBalancePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InGameTimePage.xaml.cs">
+      <DependentUpon>InGameTimePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Notes.xaml.cs">
       <DependentUpon>Notes.xaml</DependentUpon>
     </Compile>
@@ -85,11 +99,18 @@
     </Compile>
     <Compile Include="Classes\SlayerTask.cs" />
     <Compile Include="Classes\Item.cs" />
+    <Compile Include="SlayerPlot.xaml.cs">
+      <DependentUpon>SlayerPlot.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TaskAddWindow.xaml.cs">
       <DependentUpon>TaskAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\Utils.cs" />
-    <Page Include="BossLogsPage.xaml">
+    <Compile Include="TimePlot.xaml.cs">
+      <DependentUpon>TimePlot.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\TimeViewModel.cs" />
+    <Page Include="BalancePlot.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -102,6 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GoldBalancePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InGameTimePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -125,7 +150,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SlayerPlot.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TaskAddWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimePlot.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

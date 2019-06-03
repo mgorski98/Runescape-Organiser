@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Utils;
 
-//TODO: add validation if the monster has a slayer contract available (e.g. Abyssal demons - yes, Dark beasts - no)
 namespace RunescapeOrganiser {
     /// <summary>
     /// Interaction logic for TaskAddWindow.xaml
@@ -176,9 +175,7 @@ namespace RunescapeOrganiser {
                     Notes n = new Notes();
                     n.Show();
                 }
-            } else {
-                AddTask();
-            }
+            } else AddTask();
         }
 
         private void BossCheckBox_Checked(object sender, RoutedEventArgs e) {

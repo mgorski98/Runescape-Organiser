@@ -9,6 +9,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace RunescapeOrganiser {
     /// <summary>
@@ -24,32 +25,30 @@ namespace RunescapeOrganiser {
             get;set;
         }
 
-        private static object taskThreadLock = new object();
-        private static object balanceThreadLock = new object();
-
-        private const string copiedFilesFilePath = @"../../Copies";
-
-        private bool FinishedLoadingTasks {
+        public ObservableCollection<DailyTimeStatistic> DailyTimeStatistics {
             get; set;
         }
 
-        private bool FinishedLoadingBalances {
-            get;set;
-        }
+        private static object taskThreadLock = new object();
+        private static object balanceThreadLock = new object();
+        private static object statisticThreadLock = new object();
+
+        private const string copiedFilesFilePath = @"../../Copies";
 
         private bool FinishedSaving {
             get;set;
         }
 
         private SlayerPage slayerPage;
-        private BossLogsPage bossLogsPage;
         private GoldBalancePage goldBalancePage;
+        private InGameTimePage inGameTimePage;
 
         public MainWindow() {
             //init collections
-            this.DailyGoldBalances = new ObservableCollection<DailyGoldBalance>();
             this.FinishedSaving = true;
+            this.DailyGoldBalances = new ObservableCollection<DailyGoldBalance>();
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>();
+            this.DailyTimeStatistics = new ObservableCollection<DailyTimeStatistic>();
             //init windows
             this.InitializeComponent();
             this.ApplicationInit();
@@ -59,62 +58,82 @@ namespace RunescapeOrganiser {
             //load collection items
             this.LoadTasks();
             this.LoadBalances();
+            this.LoadTimeStatistics();
+            this.InitTimeStatistics();
             //init the views
             this.goldBalancePage.PopulateViews();
-            this.UpdateOwners();
             //ALWAYS BACK UP YOUR WORK KIDDOS
             this.MakeFilesBackup();
             GC.Collect();
+            this.UpdateOwners();
+            //this.inGameTimePage.DrawChart();
         }
 
+        private void InitTimeStatistics() {
+            foreach (var stat in this.DailyTimeStatistics) {
+                stat.Init();
+            }
+        }
+
+        public SlayerPage GetSlayerPage() => this.slayerPage;
+        public InGameTimePage GetInGameTimePage() => this.inGameTimePage;
+        public GoldBalancePage GetGoldBalancePage() => this.goldBalancePage;
+
+        /// <summary>
+        /// makes a backup of task, balance and data files
+        /// </summary>
         private void MakeFilesBackup() {
             string jsonFilesPath = copiedFilesFilePath + "/" + @"JsonFiles_Copies";
             string tasksPath = copiedFilesFilePath + "/" + @"Tasks_Copies";
             string moneyBalancesPath = copiedFilesFilePath + "/" + @"MoneyBalances_Copies";
-            string[] jsonFiles, tasksFiles, moneyBalanceFiles;
+            string timeStatisticsPath = copiedFilesFilePath + "/" + @"TimeStatistics_Copies";
+            string[] jsonFiles, tasksFiles, moneyBalanceFiles, timeStatisticsFiles;
             jsonFiles = Directory.GetFiles(@"../../JsonFiles");
             tasksFiles = Directory.GetFiles(@"../../Tasks");
             moneyBalanceFiles = Directory.GetFiles(@"../../MoneyBalances");
+            timeStatisticsFiles = Directory.GetFiles(@"../../TimeStatistics");
 
-            foreach (var jsonFile in jsonFiles) {
-                string filename = jsonFilesPath + "/" + Path.GetFileNameWithoutExtension(jsonFile) + " Copy" + Path.GetExtension(jsonFile);
-                File.Copy(jsonFile, filename, true);
+            void CopyFiles(string file, string basePath) {
+                string filename = basePath + "/" + Path.GetFileNameWithoutExtension(file) + " Copy" + Path.GetExtension(file);
+                File.Copy(file, filename, true);
             }
 
-            foreach (var taskFile in tasksFiles) {
-                string filename = tasksPath + "/" + Path.GetFileNameWithoutExtension(taskFile) + " Copy" + Path.GetExtension(taskFile);
-                File.Copy(taskFile, filename, true);
-            }
-
-            foreach (var moneyBalanceFile in moneyBalanceFiles) {
-                string filename = moneyBalancesPath + "/" + Path.GetFileNameWithoutExtension(moneyBalanceFile) + " Copy" + Path.GetExtension(moneyBalanceFile);
-                File.Copy(moneyBalanceFile, filename, true);
-            }
+            Parallel.ForEach(jsonFiles, elem => CopyFiles(elem, jsonFilesPath));
+            Parallel.ForEach(tasksFiles, elem => CopyFiles(elem, tasksPath));
+            Parallel.ForEach(moneyBalanceFiles, elem => CopyFiles(elem, moneyBalancesPath));
+            Parallel.ForEach(timeStatisticsFiles, elem => CopyFiles(elem, timeStatisticsPath));
         }
 
+        /// <summary>
+        /// updates the owners of each tree item (owners are the same as parents)
+        /// </summary>
         private void UpdateOwners() {
             foreach (var balance in this.DailyGoldBalances) {
                 balance.UpdateOwners();
             }
+            foreach (var stat in this.DailyTimeStatistics) {
+                stat.UpdateOwners();
+            }
         }
 
+        /// <summary>
+        /// loads all slayer tasks using threads
+        /// </summary>
         private void LoadTasks() {
             string[] files = Directory.GetFiles(@"../../Tasks");
-            List<Thread> threads = new List<Thread>();
-            foreach (var file in files) {
-                Thread t = new Thread(() => LoadTaskFromJson(file));
-                threads.Add(t);
-                t.Start();
-            }
-            while (!this.FinishedLoadingTasks) {
-                this.FinishedLoadingTasks = threads.All(t => !t.IsAlive);
-            }
+            Parallel.ForEach(files, path => LoadTaskFromJson(path));
             List<DailySlayerTaskList> tempList = new List<DailySlayerTaskList>(this.DailySlayerTasks);
             tempList = tempList.OrderByDescending(task => task.TaskDate).ToList();
             this.DailySlayerTasks = new ObservableCollection<DailySlayerTaskList>(tempList);
             this.Dispatcher.Invoke(() => slayerPage.SlayerTasksView.ItemsSource = this.DailySlayerTasks);
         }
 
+        /// <summary>
+        /// loads a single slayer task from a file
+        /// </summary>
+        /// <param name="path">
+        /// path to a file containing the slayer task
+        /// </param>
         private void LoadTaskFromJson(string path) {
             if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
 
@@ -129,23 +148,24 @@ namespace RunescapeOrganiser {
             }
         }
 
+        /// <summary>
+        /// load all daily gold balances using threads
+        /// </summary>
         private void LoadBalances() {
             string[] files = Directory.GetFiles(@"../../MoneyBalances");
-            List<Thread> threads = new List<Thread>();
-            foreach (var file in files) {
-                Thread t = new Thread(() => LoadBalanceFromJson(file));
-                threads.Add(t);
-                t.Start();
-            }
-            while (!this.FinishedLoadingBalances) {
-                this.FinishedLoadingBalances = threads.All(t => !t.IsAlive);
-            }
+            Parallel.ForEach(files, path => LoadBalanceFromJson(path));
             List<DailyGoldBalance> tempList = new List<DailyGoldBalance>(this.DailyGoldBalances);
             tempList = tempList.OrderByDescending(balance => balance.Date).ToList();
             this.DailyGoldBalances = new ObservableCollection<DailyGoldBalance>(tempList);
             this.Dispatcher.Invoke(() => goldBalancePage.GoldBalanceView.ItemsSource = this.DailyGoldBalances);
         }
 
+        /// <summary>
+        /// Function to load a daily gold balance from json
+        /// </summary>
+        /// <param name="path">
+        /// path to a file containing a daily gold balance
+        /// </param>
         private void LoadBalanceFromJson(string path) {
             if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
 
@@ -160,35 +180,72 @@ namespace RunescapeOrganiser {
             }
         }
 
+        private void LoadTimeStatistics() {
+            string[] files = Directory.GetFiles(@"../../TimeStatistics");
+            Parallel.ForEach(files, path => this.LoadTimeStatisticFromJson(path));
+            List<DailyTimeStatistic> tempList = new List<DailyTimeStatistic>(this.DailyTimeStatistics);
+            tempList = tempList.OrderByDescending(statistic => statistic.Date).ToList();
+            this.DailyTimeStatistics = new ObservableCollection<DailyTimeStatistic>(tempList);
+            this.Dispatcher.Invoke(() => this.inGameTimePage.TimeStatisticsView.ItemsSource = this.DailyTimeStatistics);
+        }
+
+        private void LoadTimeStatisticFromJson(string path) {
+            if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+
+            DailyTimeStatistic ingametime = null;
+
+            using (var reader = new StreamReader(path)) {
+                ingametime = JsonConvert.DeserializeObject<DailyTimeStatistic>(reader.ReadToEnd());
+            }
+
+            lock (statisticThreadLock) {
+                this.DailyTimeStatistics.Add(ingametime);
+            }
+        }
+
+        /// <summary>
+        /// initializes application view
+        /// </summary>
         private void ApplicationInit() {
             TabItem item1, item2, item3;
             item1 = new TabItem();
             item2 = new TabItem();
             item3 = new TabItem();
+
             Frame f1, f2, f3;
             f1 = new Frame();
             f2 = new Frame();
             f3 = new Frame();
+
             f1.Background = Brushes.LightGray;
             f2.Background = Brushes.LightGray;
             f3.Background = Brushes.LightGray;
+
             item1.Header = "Slayer tasks";
             item2.Header = "Gold balances";
-            item3.Header = "Boss logs";
+            item3.Header = "In-game time";
+
             this.slayerPage = new SlayerPage();
             f1.Content = slayerPage;
-            this.bossLogsPage = new BossLogsPage();
-            f3.Content = bossLogsPage;
+            
             this.goldBalancePage = new GoldBalancePage();
             f2.Content = goldBalancePage;
+
+            this.inGameTimePage = new InGameTimePage();
+            f3.Content = inGameTimePage;
+
             item1.Content = f1;
             item2.Content = f2;
             item3.Content = f3;
+
             this.Tabs.Items.Add(item1);
             this.Tabs.Items.Add(item2);
             this.Tabs.Items.Add(item3);
         }
 
+        /// <summary>
+        /// shows window to add a new Slayer task
+        /// </summary>
         public void ShowAddTaskWindow() {
             try {
                 var t = Application.Current.Windows.OfType<TaskAddWindow>().ElementAt(0);
@@ -200,35 +257,31 @@ namespace RunescapeOrganiser {
             }
         }
 
+        /// <summary>
+        /// saves current progress
+        /// </summary>
         private void SaveAllProgress() {
-            this.FinishedSaving = false;
-            List<Thread> threads = new List<Thread>();
-            Thread items = new Thread(() => Earnings.DumpToDisk());
-            threads.Add(items);
-            items.Start();
-            foreach (var balance in DailyGoldBalances) {
-                Thread t = new Thread(() => balance.SaveToJson());
-                threads.Add(t);
-                t.Start();
-            }
-
-            while (!this.FinishedSaving) {
-                this.FinishedSaving = threads.All(t => !t.IsAlive);
-            }
-
-            this.FinishedSaving = true;
+            (new Thread(() => Earnings.DumpToDisk())).Start();
+            Parallel.ForEach(DailyGoldBalances, element => element.SaveToJson());
+            Parallel.ForEach(DailySlayerTasks, element => element.SaveToJson());
+            Parallel.ForEach(DailyTimeStatistics, element => element.SaveToJson());
             MessageBox.Show("Progress saved successfully!", "Saving", MessageBoxButton.OK);
         }
 
+        /// <summary>
+        /// draws a chart depending on which page is active (gold balance/slayer xp)
+        /// </summary>
         public void DrawChart() {
             this.Dispatcher.Invoke(() => {
                 if (this.Tabs.SelectedItem == null) return;
                 if (this.Tabs.SelectedItem is TabItem ti) {
                     if (ti.Content is Frame f) {
                         if (f.Content is SlayerPage p1) {
-                            (new Thread(() => p1.DrawChart())).Start();
+                            p1.DrawChart();
                         } else if (f.Content is GoldBalancePage p2) {
-                            (new Thread(() => p2.DrawChart())).Start();
+                            p2.DrawChart();
+                        } else if (f.Content is InGameTimePage p3) {
+                            p3.DrawChart();
                         }
                     }
                 }
@@ -237,12 +290,17 @@ namespace RunescapeOrganiser {
 
         //event handlers
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e) {
-            this.slayerPage.KillAndClearChartProcess();
-            this.goldBalancePage.KillAndClearChartProcess();
-            MessageBoxResult savingFlag = MessageBox.Show("Do you want to save unsaved changes?", "Save changes", MessageBoxButton.YesNo);
-            if (savingFlag == MessageBoxResult.Yes) {
+            MessageBoxResult choice = MessageBox.Show("Do you want to save unsaved changes?", "Save changes", MessageBoxButton.YesNoCancel);
+
+            if (choice == MessageBoxResult.Yes) {
                 this.SaveAllProgress();
             }
+
+            if (choice == MessageBoxResult.Cancel) {
+                e.Cancel = true;
+                return;
+            }
+
             foreach (var window in Application.Current.Windows) {
                 try {
                     ((Window)window).Close();
